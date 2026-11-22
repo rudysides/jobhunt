@@ -17,6 +17,25 @@ body {
 	font-variant-numeric: tabular-nums;
 }
 
+/* Command chip that copies on click: command with a copy icon on the right, accent border and text on hover. */
+.copy-code {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	margin-left: 4px;
+	vertical-align: middle;
+	border: 1px solid transparent;
+	transition:
+		border-color 120ms,
+		color 120ms;
+}
+@media (hover: hover) {
+	.copy-code:hover {
+		color: var(--mantine-primary-color-filled);
+		border-color: var(--mantine-primary-color-filled);
+	}
+}
+
 /* Row actions stay outlined: on hover the icon and border take the accent, green for saving, red for removing. */
 @media (hover: hover) {
 	.hover-accent:hover {

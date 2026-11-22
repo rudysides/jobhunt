@@ -15,6 +15,7 @@ import {
 	Stack,
 	Text,
 	Title,
+	UnstyledButton,
 	useMantineColorScheme,
 	type MantineColorScheme,
 } from '@mantine/core';
@@ -47,6 +48,26 @@ function Section({ title, hint, children }: { title: string; hint?: ReactNode; c
 				{children}
 			</Stack>
 		</Paper>
+	);
+}
+
+// A command chip that copies itself on click.
+function CopyCode({ command }: { command: string }) {
+	const copy = async () => {
+		try {
+			await navigator.clipboard.writeText(command);
+			say(tp.copied(command));
+		} catch {
+			say(tp.copyFail, 'red');
+		}
+	};
+	return (
+		<UnstyledButton title={tp.copyCommand} aria-label={`${tp.copyCommand}: ${command}`} onClick={copy}>
+			<Code className="copy-code">
+				{command}
+				<Icon name="copy" size={12} />
+			</Code>
+		</UnstyledButton>
 	);
 }
 
@@ -109,7 +130,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 				title={tp.profile}
 				hint={
 					<>
-						{profile ? tp.profileHint : tp.noProfile} <Code>/setup</Code>
+						{profile ? tp.profileHint : tp.noProfile} <CopyCode command="/setup" />
 					</>
 				}
 			>
