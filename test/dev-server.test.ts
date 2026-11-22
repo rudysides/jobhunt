@@ -1,6 +1,6 @@
 // JL-02: the dev server must not hand the CV, other profile files or dist/ to anyone, nor allow cross-origin reads.
 import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
-import { createServer, type ViteDevServer } from 'vite';
+import { createServer, normalizePath, type ViteDevServer } from 'vite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let server: ViteDevServer;
@@ -31,7 +31,9 @@ const status = async (path: string) => (await fetch(base + path)).status;
 describe('dev server', () => {
 	it('denies the CV and other non-JSON profile files', async () => {
 		expect(await status('/profile/example/cv.md')).toBe(403);
-		expect(await status(`/@fs${process.cwd()}/profile/example/cv.md`)).toBe(403);
+		// Vite's /@fs/ form of an absolute path: /@fs/Users/… on macOS and Linux, /@fs/D:/… on Windows.
+		const abs = normalizePath(process.cwd()).replace(/^\//, '');
+		expect(await status(`/@fs/${abs}/profile/example/cv.md`)).toBe(403);
 	});
 
 	it('denies dist/', async () => expect(await status(`/${distProbe}`)).toBe(403));
