@@ -18,9 +18,9 @@ import {
 	useMantineColorScheme,
 	type MantineColorScheme,
 } from '@mantine/core';
-import { Icon, accents, downloadJson, readRowsFile, say, useAccent, type IconName } from './ui';
+import { Icon, accents, downloadJson, readBackupFile, say, useAccent, type IconName } from './ui';
 import { profile } from './profile';
-import { useJobs, type JobRow } from './store';
+import { normalizeRow, useJobs, type JobRow } from './store';
 import { t } from './i18n';
 
 const tp = t.settings;
@@ -51,10 +51,12 @@ function Section({ title, hint, children }: { title: string; hint?: ReactNode; c
 }
 
 export function Settings({ onClose }: { onClose: () => void }) {
-	const { rows, replaceAll, clearAll } = useJobs();
+	const { rows, dismissedLeads, replaceAll, clearAll } = useJobs();
 	const { colorScheme, setColorScheme } = useMantineColorScheme();
 	const { accent, setAccent } = useAccent();
 	const [armed, setArmed] = useState(false);
+	// A checked backup waiting for the user to confirm that it replaces the current list.
+	const [pending, setPending] = useState<{ rows: JobRow[]; dismissedLeads?: string[] } | null>(null);
 
 	// The delete confirmation turns itself off after a while.
 	useEffect(() => {
@@ -66,12 +68,17 @@ export function Settings({ onClose }: { onClose: () => void }) {
 	const importJson = async (file: File | null) => {
 		if (!file) return;
 		try {
-			const imported = await readRowsFile<JobRow>(file);
-			replaceAll(imported);
-			say(t.importOk(imported.length));
+			setPending(await readBackupFile(file, normalizeRow));
 		} catch (e) {
 			say(t.importFail((e as Error).message), 'red');
 		}
+	};
+
+	const confirmImport = () => {
+		if (!pending) return;
+		replaceAll(pending.rows, pending.dismissedLeads);
+		say(t.importOk(pending.rows.length));
+		setPending(null);
 	};
 
 	const deleteAll = () => {
@@ -169,7 +176,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 						variant="default"
 						size="xs"
 						leftSection={<Icon name="download" />}
-						onClick={() => downloadJson({ exportedAt: new Date().toISOString(), rows })}
+						onClick={() => downloadJson({ version: 2, exportedAt: new Date().toISOString(), rows, dismissedLeads })}
 					>
 						{tp.backup}
 					</Button>
@@ -181,6 +188,16 @@ export function Settings({ onClose }: { onClose: () => void }) {
 						)}
 					</FileButton>
 				</Group>
+				{pending && (
+					<Group gap="xs">
+						<Button size="xs" color="red" onClick={confirmImport}>
+							{tp.importConfirm(pending.rows.length, rows.length)}
+						</Button>
+						<Button size="xs" variant="default" onClick={() => setPending(null)}>
+							{tp.importCancel}
+						</Button>
+					</Group>
+				)}
 				<Stack gap={12}>
 					<Group gap="xs">
 						{armed ? (

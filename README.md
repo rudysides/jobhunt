@@ -114,6 +114,10 @@ Opens on [http://127.0.0.1:5180](http://127.0.0.1:5180).
   boards while running `/find-jobs`.
 - App state (applied / removed) is in your browser's `localStorage` for `127.0.0.1:5180`. Use **Backup** / **Import**
   to move it.
+- **Watch the agent.** Job postings are written by strangers and can contain text aimed at AI agents. The skills treat
+  it as data, and the project settings only pre-approve `pnpm leads:check`. Still read what Claude Code asks to do, and
+  say no to anything that sends your CV somewhere or opens unexpected sites. The same goes for postings that ask for
+  fees, ID scans or bank details: those are scams, and `/find-jobs` skips them.
 
 ## 🚫 Why it isn't deployable
 

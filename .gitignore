@@ -15,3 +15,11 @@ profile/*
 
 # Third-party skill (glacierphonk/naming), installed locally only.
 .claude/skills/naming/
+
+# CVs dropped in the repo root for /setup. Never committed.
+/*.docx
+/*.doc
+/*.odt
+/*.rtf
+/*.txt
+/cv*.md

@@ -1,0 +1,2 @@
+# Don't install package versions younger than a day (hijacked releases are usually pulled within hours).
+minimumReleaseAge: 1440

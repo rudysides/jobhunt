@@ -3,5 +3,5 @@ import { en, type Messages } from './en';
 
 const messages: Record<string, Messages> = { en };
 
-export const locale = profile?.locale && profile.locale in messages ? profile.locale : 'en';
+export const locale = profile?.locale && Object.hasOwn(messages, profile.locale) ? profile.locale : 'en';
 export const t = messages[locale]!;

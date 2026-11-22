@@ -15,7 +15,7 @@ user's CV (`/setup`, `/find-jobs` in `.claude/skills/`); the app is just two lis
 pnpm dev          # http://127.0.0.1:5180
 pnpm check        # typecheck + oxlint + oxfmt --check + leads:check
 pnpm leads:check  # validates profile/*.json
-pnpm build        # compile check only, never deploy dist/
+pnpm build        # compile check only, writes nothing (build.write: false)
 pnpm fmt
 ```
 
@@ -29,6 +29,8 @@ Run `pnpm check` before finishing a change.
 - **Never commit or write personal data outside `profile/`.** `profile/example/` stays fictional; skills never write there.
 - **Port 5180 is fixed on purpose.** `localStorage` belongs to the origin; another port = empty app.
   Don't change `strictPort` or the storage key without a migration.
+- **One validator:** `src/validate.ts` holds the e-mail, link and text rules for `leads:check`, import and rendering.
+  Saved state changes need a `version` bump and a `migrate` step in `src/store.ts`.
 - **Leads are append-only.** New entries with a unique, stable `leadId`. Never rewrite or reorder existing ones.
   The store merges new ids on load and never re-adds removed ones.
 - **Never guess e-mail addresses.** Only addresses printed on the posting. Never send e-mails or submit forms.

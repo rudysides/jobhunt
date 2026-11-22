@@ -27,6 +27,8 @@ export const en = {
 		dataHint: 'Your progress lives only in this browser. Back it up now and then.',
 		backup: 'Backup',
 		import: 'Import',
+		importConfirm: (n: number, current: number) => `Replace ${current} jobs with ${n} from the backup`,
+		importCancel: 'Cancel',
 		deleteAll: 'Delete all jobs',
 		deleteAllConfirm: (n: number) => `Really delete ${n}?`,
 		deleteAllHint:
@@ -62,6 +64,12 @@ export const en = {
 	del: { tooltip: 'Not a fit, remove', aria: 'Remove' },
 	importOk: (n: number) => `Loaded ${n} rows`,
 	importFail: (msg: string) => `Import failed: ${msg}`,
+	crash: {
+		title: 'Something broke',
+		body: 'The app could not show your data. Download it first, then reset the app to start over. Jobs from leads.json come back after a reset.',
+		download: 'Download raw data',
+		reset: 'Reset app data',
+	},
 	onboarding: {
 		title: 'Set up Jobhunt',
 		intro: 'Everything runs on your machine. Your profile and leads live in the gitignored profile/ folder.',

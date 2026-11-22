@@ -36,6 +36,7 @@ import {
 	shortDate,
 } from './ui';
 import { isSent, mailtoHref, useJobs, type JobRow } from './store';
+import { isEmail, isHttpUrl } from './validate.ts';
 import { Settings } from './Settings';
 import { leads, profile } from './profile';
 import { locale, t } from './i18n';
@@ -90,7 +91,7 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 					)}
 				</Box>
 				<Group gap={8} wrap="nowrap" ml={{ base: 'auto', sm: 0 }}>
-					{!sent && r.email && <MailButton href={mailtoHref(r)} label={t.row.mailTo(r.email)} />}
+					{!sent && isEmail(r.email) && <MailButton href={mailtoHref(r)} label={t.row.mailTo(r.email)} />}
 					{sent && (
 						<NoteButton
 							active={myNotes !== ''}
@@ -99,7 +100,7 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 							onClick={() => (editing ? noteRef.current?.blur() : setEditing(true))}
 						/>
 					)}
-					{r.jobUrl && <LinkButton href={r.jobUrl} label={t.link.open} />}
+					{isHttpUrl(r.jobUrl) && <LinkButton href={r.jobUrl} label={t.link.open} />}
 					{sent ? (
 						<Button
 							variant="default"

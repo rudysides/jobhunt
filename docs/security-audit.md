@@ -1,7 +1,7 @@
 # Security audit
 
-**Date:** 2026-11-22 · **Scope:** the working tree before the first commit · **Findings:** 10, all open, tracked in
-[roadmap.md](roadmap.md)
+**Date:** 2026-11-22 · **Scope:** the working tree before the first commit · **Findings:** 10, nine fixed in 0.9.0,
+JL-09 open (optional for 1.0, see [roadmap.md](roadmap.md))
 
 **Audited versions:** Vite 8.3.8, React 19.3.1, Mantine 9.8.1, zustand 5.1.0, TypeScript 7.0.2, Node 26.13, pnpm 12.18
 
@@ -19,18 +19,18 @@ edges:
 
 All of it can be fixed with small changes and no new runtime dependencies.
 
-| ID    | Severity | Finding                                                             |
-| ----- | -------- | ------------------------------------------------------------------- |
-| JL-01 | Medium   | Prompt injection from job postings into an agent that holds the CV  |
-| JL-02 | Medium   | Dev server exposes the raw CV to every localhost origin             |
-| JL-03 | Low      | `mailto:` parameter injection through the `email` field             |
-| JL-04 | Low      | Backup import trusts any JSON: a crash that survives reloads        |
-| JL-05 | Low      | `jobUrl` accepts any URL scheme                                     |
-| JL-06 | Low      | `pnpm build` writes personal data to `dist/`                        |
-| JL-07 | Low      | Few guardrails against committing personal data                     |
-| JL-08 | Info     | Supply chain: no update automation, no delay for brand-new versions |
-| JL-09 | Info     | No Content-Security-Policy to enforce "nothing leaves the app"      |
-| JL-10 | Info     | Robustness: locale lookup, no error boundary, no storage migration  |
+| ID    | Severity | Finding                                                             | Status (0.9.0) |
+| ----- | -------- | ------------------------------------------------------------------- | -------------- |
+| JL-01 | Medium   | Prompt injection from job postings into an agent that holds the CV  | Fixed          |
+| JL-02 | Medium   | Dev server exposes the raw CV to every localhost origin             | Fixed          |
+| JL-03 | Low      | `mailto:` parameter injection through the `email` field             | Fixed          |
+| JL-04 | Low      | Backup import trusts any JSON: a crash that survives reloads        | Fixed          |
+| JL-05 | Low      | `jobUrl` accepts any URL scheme                                     | Fixed          |
+| JL-06 | Low      | `pnpm build` writes personal data to `dist/`                        | Fixed          |
+| JL-07 | Low      | Few guardrails against committing personal data                     | Fixed          |
+| JL-08 | Info     | Supply chain: no update automation, no delay for brand-new versions | Fixed          |
+| JL-09 | Info     | No Content-Security-Policy to enforce "nothing leaves the app"      | Open, optional |
+| JL-10 | Info     | Robustness: locale lookup, no error boundary, no storage migration  | Fixed          |
 
 Severity weighs likelihood against impact for one person running the app on their own computer. The impact of a leak
 is high everywhere (a CV holds name, contacts and work history), so likelihood decides.
@@ -203,8 +203,9 @@ script, delete the existing `dist/`.
 **Where:** [`.gitignore`](../.gitignore), [`.claude/skills/setup/SKILL.md`](../.claude/skills/setup/SKILL.md) step 2,
 the GitHub repository settings.
 
-Nothing is wrong today: there are no commits yet, `profile/` and `dist/` are ignored, and the files that would be staged
-are clean. The gaps are for later, and for other people's forks:
+At audit time there were no commits yet, `profile/` and `dist/` were ignored, and the files that would be staged were
+clean. The gaps were for later, and for other people's forks. Fixed in 0.9.0: CV formats in the root are ignored and
+every commit uses a GitHub noreply address. The CI check and issue templates are on the 1.0 list.
 
 - `/setup` looks for a CV in the repo root, but only `*.pdf` is ignored there. A `cv.docx`, `cv.txt` or `cv.md` in the
   root would go in with `git add .`.
@@ -253,7 +254,7 @@ hot reload still works.
 Run after the fixes, with `pnpm dev` running:
 
 ```sh
-pnpm check && pnpm test && pnpm audit
+pnpm check && pnpm audit   # plus pnpm test once tests exist
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:5180/profile/cv.md        # 403
 curl -s -o /dev/null -w '%{http_code}\n' http://127.0.0.1:5180/dist/index.html      # 403 or 404
 curl -s -D - -o /dev/null -H 'Origin: http://localhost:3000' \

@@ -7,6 +7,3 @@ export const shortDate = (ymd: string, locale = 'en') => {
 	const sameYear = d.getFullYear() === new Date().getFullYear();
 	return d.toLocaleDateString(locale, { day: 'numeric', month: 'short', year: sameYear ? undefined : 'numeric' });
 };
-
-/** Days from a date (YYYY-MM-DD) until today. */
-export const daysSince = (ymd: string) => Math.floor((Date.parse(today()) - Date.parse(ymd)) / 86_400_000);

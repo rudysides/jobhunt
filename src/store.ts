@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { today } from './ui';
 import { leads, profile, type Lead } from './profile';
+import { cleanText, isEmail, isHttpUrl } from './validate.ts';
 
 export type Status = 'todo' | 'applied';
 
@@ -40,6 +41,45 @@ function blankRow(partial: Partial<JobRow> = {}): JobRow {
 
 const fromLead = ({ foundAt: _, ...l }: Lead) => blankRow(l);
 
+const TEXT_FIELDS = [
+	'company',
+	'position',
+	'location',
+	'contactName',
+	'role',
+	'source',
+	'salary',
+	'notes',
+	'myNotes',
+] as const;
+
+/**
+ * A row from an imported backup, checked and cleaned (JL-04). Only known fields are kept, text loses control
+ * characters and is capped, e-mails and links that fail the lead rules are dropped. Null when it isn't a row at all.
+ */
+export function normalizeRow(v: unknown): JobRow | null {
+	if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
+	const r = v as Record<string, unknown>;
+	if (r.status !== 'todo' && r.status !== 'applied') return null;
+	const text = Object.fromEntries(
+		TEXT_FIELDS.map((k) => [k, cleanText(r[k], k === 'notes' || k === 'myNotes' ? 5000 : 300)])
+	);
+	const email = cleanText(r.email, 254);
+	const jobUrl = cleanText(r.jobUrl, 2048);
+	const fit =
+		Number.isInteger(r.fit) && (r.fit as number) >= 1 && (r.fit as number) <= 5 ? (r.fit as number) : undefined;
+	return blankRow({
+		...text,
+		id: typeof r.id === 'string' && r.id ? cleanText(r.id, 100) : crypto.randomUUID(),
+		leadId: typeof r.leadId === 'string' && /^[a-z0-9-]{1,200}$/.test(r.leadId) ? r.leadId : null,
+		email: isEmail(email) ? email : '',
+		jobUrl: isHttpUrl(jobUrl) ? jobUrl : '',
+		status: r.status,
+		appliedAt: typeof r.appliedAt === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.appliedAt) ? r.appliedAt : '',
+		...(fit && { fit }),
+	});
+}
+
 /** Leads that are not in the list yet and were not dismissed. */
 const newLeads = (rows: JobRow[], dismissed: string[]) => {
 	const known = new Set([...rows.map((r) => r.leadId), ...dismissed]);
@@ -56,7 +96,7 @@ interface JobsState {
 	remove: (id: string) => void;
 	setNotes: (id: string, text: string) => void;
 	restore: (row: JobRow, index: number) => void;
-	replaceAll: (rows: JobRow[]) => void;
+	replaceAll: (rows: JobRow[], dismissedLeads?: string[]) => void;
 	clearAll: () => void;
 }
 
@@ -85,7 +125,8 @@ export const useJobs = create<JobsState>()(
 					rows: s.rows.some((r) => r.id === row.id) ? s.rows : s.rows.toSpliced(index, 0, row),
 					dismissedLeads: s.dismissedLeads.filter((l) => l !== row.leadId),
 				})),
-			replaceAll: (rows) => set({ rows: rows.map((r) => blankRow(r)) }),
+			// Rows come from normalizeRow. Older backups have no dismissedLeads: keep the current ones.
+			replaceAll: (rows, dismissedLeads) => set((s) => ({ rows, dismissedLeads: dismissedLeads ?? s.dismissedLeads })),
 			// Deletes everything and dismisses every known lead, so leads.json doesn't re-add them on reload.
 			clearAll: () =>
 				set((s) => ({
@@ -94,9 +135,15 @@ export const useJobs = create<JobsState>()(
 				})),
 		}),
 		{
-			// Different key and port (5180) than the personal app, so the two never share data.
+			// Changing the key or the port (5180) means an empty app; bump `version` and migrate instead.
 			name: 'jobhunt-local.jobs.v1',
-			version: 1,
+			version: 2,
+			// v1 → v2: rows got the user's own note.
+			migrate: (persisted, version) => {
+				const s = (persisted ?? {}) as Partial<JobsState>;
+				if (version < 2) s.rows = (s.rows ?? []).map((r) => ({ ...r, myNotes: r.myNotes ?? '' }));
+				return s as JobsState;
+			},
 			// New leads from leads.json are added on top. Unsent leads that disappeared from leads.json disappear here too.
 			merge: (persisted, current) => {
 				const s = { ...current, ...(persisted as Partial<JobsState>) };
@@ -105,8 +152,8 @@ export const useJobs = create<JobsState>()(
 				const byId = new Map(leads.map((l) => [l.leadId, l]));
 				const refreshed = kept.map((r) => {
 					const l = r.leadId ? byId.get(r.leadId) : undefined;
-					// Older saved rows have no myNotes, and fromLead would blank it.
-					return l && !isSent(r) ? { ...r, ...fromLead(l), id: r.id, myNotes: r.myNotes ?? '' } : r;
+					// fromLead would blank the user's own note, so keep it.
+					return l && !isSent(r) ? { ...r, ...fromLead(l), id: r.id, myNotes: r.myNotes } : r;
 				});
 				return { ...s, rows: [...newLeads(refreshed, s.dismissedLeads), ...refreshed] };
 			},
