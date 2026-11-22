@@ -25,7 +25,9 @@ developer, data that keeps working across 1.x updates, and easy to contribute to
       on `main` (CI required, no force pushes or deletion; repo admins may bypass so direct pushes keep working).
 - [ ] **Release:** `"version": "1.0.0"`, tag `v1.0.0`, release notes from the changelog.
 
-Optional: Content-Security-Policy, Czech UI.
+Optional: Content-Security-Policy.
+
+Done beyond the plan: Czech UI.
 
 ## After 1.0
 
