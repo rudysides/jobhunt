@@ -21,10 +21,9 @@ developer, data that keeps working across 1.x updates, and easy to contribute to
 - [ ] **Fresh-eyes install** by someone else on a clean machine, using only the README.
 - [x] **GitHub settings (private repo):** description, topics, Dependabot alerts and security updates, no wiki or
       projects.
-- [ ] **Release:** `"version": "1.0.0"`, tag `v1.0.0`, release notes from the changelog, make the repository public.
-- [ ] **Right after going public** (GitHub offers these only on public repos without Pro): private vulnerability
-      reporting, secret scanning with push protection, a ruleset on `main` (CI required, no force pushes or deletion,
-      repo admins may bypass so direct pushes keep working).
+- [x] **Public repository** with private vulnerability reporting, secret scanning with push protection and a ruleset
+      on `main` (CI required, no force pushes or deletion; repo admins may bypass so direct pushes keep working).
+- [ ] **Release:** `"version": "1.0.0"`, tag `v1.0.0`, release notes from the changelog.
 
 Optional: Content-Security-Policy, Czech UI.
 
