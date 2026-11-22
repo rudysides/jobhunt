@@ -5,8 +5,7 @@ import { createTheme, rem } from '@mantine/core';
 export const theme = createTheme({
 	primaryColor: 'blue',
 	primaryShade: { light: 7, dark: 5 },
-	// Light accents (orange, cyan) get dark text so it stays readable.
-	autoContrast: true,
+	// Filled accents always carry white text, whatever the color (no autoContrast).
 	colors: {
 		// Dark mode: near-black page (9), cards one step up (7), muted borders (4). Depth from steps, not shadows.
 		dark: [

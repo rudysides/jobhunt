@@ -79,6 +79,9 @@ claude
 
 It reads your CV, asks a few questions and writes the `profile/` folder. That folder is yours and never goes into Git.
 
+To change one part later, run `/setup roles`, `location`, `sources`, `filters` or `email`, or describe it: `/setup add
+Brno, remote only`. Each row of the profile in **Settings** copies its command for you.
+
 ### 3. Find jobs
 
 ```bash

@@ -1,11 +1,11 @@
 /*
  * Settings: profile summary, appearance (theme + accent), language and data (backup, import, delete all).
- * The profile itself is edited with /setup in Claude Code; the app only shows it.
+ * The profile itself is edited with /setup in Claude Code; the app only shows it, and each row copies the
+ * `/setup <part>` command that changes just that part.
  * Mantine remembers the color scheme itself (localStorage), the accent lives in ui/accent.tsx.
  */
 import { useEffect, useState, type ReactNode } from 'react';
 import {
-	Badge,
 	Button,
 	Code,
 	ColorSwatch,
@@ -27,12 +27,30 @@ import { languages, locale, setLocale, t } from './i18n';
 
 const tp = t.settings;
 
-// Profile summary as icon pills: target roles, locations, remote mode.
-const pills: { key: string; icon: IconName; label: string }[] = profile
+// Profile summary, one row per part of /setup. A row copies `/setup <part>`, which changes only that part.
+type ProfilePart = keyof typeof tp.profileRows;
+const join = (xs: (string | undefined)[]) => xs.filter(Boolean).join(' · ');
+const list = (xs: string[]) => xs.join(', ');
+const filters = (p: NonNullable<typeof profile>) =>
+	join([
+		p.mustHave.length ? `${tp.filterParts.must}: ${list(p.mustHave)}` : undefined,
+		p.niceToHave.length ? `${tp.filterParts.nice}: ${list(p.niceToHave)}` : undefined,
+		p.exclude.keywords.length || p.exclude.companies.length
+			? `${tp.filterParts.skip}: ${list([...p.exclude.keywords, ...p.exclude.companies])}`
+			: undefined,
+		p.salaryMin ? `${tp.filterParts.salary} ${p.salaryMin}` : undefined,
+	]);
+const profileRows: { part: ProfilePart; icon: IconName; value: string }[] = profile
 	? [
-			...profile.targetRoles.map((r) => ({ key: `r-${r}`, icon: 'briefcase' as const, label: r })),
-			...profile.locations.map((l) => ({ key: `l-${l}`, icon: 'pin' as const, label: l })),
-			{ key: 'remote', icon: 'laptop', label: tp.remote[profile.remote] },
+			{ part: 'roles', icon: 'briefcase', value: join([list(profile.targetRoles), profile.seniority]) },
+			{
+				part: 'location',
+				icon: 'pin',
+				value: join([list(profile.locations), tp.remote[profile.remote], list(profile.languages)]),
+			},
+			{ part: 'sources', icon: 'search', value: list(profile.sources.map((src) => src.id)) },
+			{ part: 'filters', icon: 'sliders', value: filters(profile) },
+			{ part: 'email', icon: 'mail', value: profile.emailTemplate.subject },
 		]
 	: [];
 
@@ -52,19 +70,44 @@ function Section({ title, hint, children }: { title: string; hint?: ReactNode; c
 	);
 }
 
+async function copy(command: string) {
+	try {
+		await navigator.clipboard.writeText(command);
+		say(tp.copied(command));
+	} catch {
+		say(tp.copyFail, 'red');
+	}
+}
+
 // A command chip that copies itself on click.
 function CopyCode({ command }: { command: string }) {
-	const copy = async () => {
-		try {
-			await navigator.clipboard.writeText(command);
-			say(tp.copied(command));
-		} catch {
-			say(tp.copyFail, 'red');
-		}
-	};
 	return (
-		<UnstyledButton title={tp.copyCommand} aria-label={`${tp.copyCommand}: ${command}`} onClick={copy}>
+		<UnstyledButton title={tp.copyCommand} aria-label={`${tp.copyCommand}: ${command}`} onClick={() => copy(command)}>
 			<Code className="copy-code">
+				{command}
+				<Icon name="copy" size={12} />
+			</Code>
+		</UnstyledButton>
+	);
+}
+
+// One part of the profile: label and values on the left, the command it copies on the right.
+function ProfileRow({ part, icon, value }: { part: ProfilePart; icon: IconName; value: string }) {
+	const command = `/setup ${part}`;
+	return (
+		<UnstyledButton
+			className="profile-row"
+			aria-label={`${tp.profileRows[part]}: ${value || '–'}. ${tp.copyCommand}: ${command}`}
+			onClick={() => copy(command)}
+		>
+			<Icon name={icon} size={16} />
+			<Stack gap={0} className="profile-row-body">
+				<Text size="xs" c="dimmed">
+					{tp.profileRows[part]}
+				</Text>
+				<Text size="sm">{value || '–'}</Text>
+			</Stack>
+			<Code className="profile-row-command">
 				{command}
 				<Icon name="copy" size={12} />
 			</Code>
@@ -130,24 +173,29 @@ export function Settings({ onClose }: { onClose: () => void }) {
 			<Section
 				title={tp.profile}
 				hint={
-					<>
-						{profile ? tp.profileHint : tp.noProfile} <CopyCode command="/setup" />
-					</>
+					profile ? (
+						tp.profileHint
+					) : (
+						<>
+							{tp.noProfile} <CopyCode command="/setup" />
+						</>
+					)
 				}
 			>
 				{profile && (
-					<Text size="sm" fw={500}>
-						{profile.name} · {profile.headline}
-					</Text>
-				)}
-				{pills.length > 0 && (
-					<Group gap={8}>
-						{pills.map((p) => (
-							<Badge key={p.key} variant="default" tt="none" leftSection={<Icon name={p.icon} size={14} />}>
-								{p.label}
-							</Badge>
-						))}
-					</Group>
+					<>
+						<Text size="sm" fw={500}>
+							{profile.name} · {profile.headline}
+						</Text>
+						<Stack gap={6}>
+							{profileRows.map((r) => (
+								<ProfileRow key={r.part} {...r} />
+							))}
+						</Stack>
+						<Text size="sm" c="dimmed">
+							{tp.profileOther} <CopyCode command="/setup" />
+						</Text>
+					</>
 				)}
 			</Section>
 

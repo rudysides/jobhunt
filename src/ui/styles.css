@@ -36,6 +36,56 @@ body {
 	}
 }
 
+/* A profile part in Settings: a hairline row that copies its /setup command. Accent border and command on hover. */
+.profile-row {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding: 8px var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	transition: border-color 120ms;
+}
+.profile-row > svg {
+	flex: none;
+	color: var(--mantine-color-dimmed);
+}
+.profile-row-body {
+	flex: 1;
+	min-width: 0;
+}
+.profile-row-command {
+	display: inline-flex;
+	flex: none;
+	align-items: center;
+	gap: 4px;
+	transition: color 120ms;
+}
+.profile-row:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 2px;
+}
+@media (hover: hover) {
+	.profile-row:hover {
+		border-color: var(--mantine-primary-color-filled);
+	}
+	.profile-row:hover .profile-row-command {
+		color: var(--mantine-primary-color-filled);
+	}
+}
+/* On a phone the command drops under the values instead of squeezing them. */
+@media (max-width: 30em) {
+	.profile-row {
+		flex-wrap: wrap;
+	}
+	.profile-row-body {
+		flex-basis: calc(100% - 28px);
+	}
+	.profile-row-command {
+		margin-left: 28px;
+	}
+}
+
 /* Row actions stay outlined: on hover the icon and border take the accent, green for saving, red for removing. */
 @media (hover: hover) {
 	.hover-accent:hover {

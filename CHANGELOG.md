@@ -10,6 +10,8 @@ First public release.
 - Backup and import with checks and a confirm step; backups include removed jobs.
 - `pnpm demo` with fictional data, `pnpm start` opens the app.
 - English and Czech UI, switchable in Settings.
+- The search profile in Settings shows every part, each row copies the `/setup <part>` command that changes just that
+  part. `/setup` also takes a change in your own words.
 - Toasts: a check when a job is marked applied, an undo button when one is removed.
 - Security: dev server locked to `127.0.0.1` without CORS and without access to your CV, a build that writes nothing,
   one validator for leads, imports and links, prompt-injection rules in the skills. See

@@ -1,7 +1,7 @@
 ---
 name: setup
 description: Onboarding for Jobhunt Local. Reads the user's CV, asks for what is missing and writes profile/profile.json + profile/cv.md. Use when the user runs /setup or wants to change their job search profile.
-argument-hint: '[path to CV]'
+argument-hint: '[path to CV | roles | location | sources | filters | email | what to change]'
 ---
 
 # /setup: build the job search profile
@@ -13,8 +13,21 @@ Reference shape: `profile/example/profile.json` (fields are typed in `src/profil
 
 ## 1. Existing profile?
 
-If `profile/profile.json` exists, show a short summary (roles, locations, remote, sources) and ask what to change.
-Edit only those fields, never wipe the file. Skip to step 5.
+If `profile/profile.json` exists, change it instead of starting over. Edit only the fields in question, never wipe the
+file, then skip to step 5. `$ARGUMENTS` says what to change (a path to an existing file is a CV, see step 2):
+
+- **A part** (the Settings rows in the app copy these): ask only about its fields, with the current values as the first
+  (Recommended) option.
+  - `roles`: `targetRoles`, `seniority`, `headline`
+  - `location`: `locations`, `remote`, `languages`
+  - `sources`: `sources` (suggest from the list in `.claude/skills/find-jobs/SKILL.md`)
+  - `filters`: `mustHave`, `niceToHave`, `exclude`, `salaryMin`
+  - `email`: `emailTemplate`, `contactEmail`
+- **Free text** such as `add Brno, remote only`: apply it, then show the changed fields as before → after. Ask only when
+  it's ambiguous.
+- **Nothing:** show a short summary (roles, locations, remote, sources) and ask what to change.
+
+The app picks up the saved file by itself, no restart needed.
 
 ## 2. Find the CV
 
