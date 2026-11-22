@@ -1,8 +1,0 @@
-{
-	"mcpServers": {
-		"mantine": {
-			"command": "npx",
-			"args": ["@mantine/mcp-server@9.8.2"]
-		}
-	}
-}
