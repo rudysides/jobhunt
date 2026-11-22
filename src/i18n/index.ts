@@ -4,6 +4,7 @@
  */
 import { profile } from '../profile';
 import { en, type Messages } from './en';
+import { cs } from './cs';
 import { de } from './de';
 import { es } from './es';
 import { fr } from './fr';
@@ -22,6 +23,7 @@ export const languages = [
 	{ code: 'nl', label: 'Nederlands', messages: nl },
 	{ code: 'pt', label: 'Português', messages: pt },
 	{ code: 'pl', label: 'Polski', messages: pl },
+	{ code: 'cs', label: 'Čeština', messages: cs },
 ] as const satisfies readonly { code: string; label: string; messages: Messages }[];
 
 const KEY = 'jobhunt-local.locale';
