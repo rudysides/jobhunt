@@ -241,9 +241,21 @@ function TabLabel({ label, count }: { label: string; count: number }) {
 	);
 }
 
+type Screen = 'main' | 'settings';
+
+// The open screen lives in the URL hash, so a reload (e.g. after switching language) stays where it was.
+function useScreen() {
+	const [screen, setState] = useState<Screen>(() => (location.hash === '#settings' ? 'settings' : 'main'));
+	const setScreen = (s: Screen) => {
+		setState(s);
+		history.replaceState(null, '', s === 'settings' ? '#settings' : location.pathname + location.search);
+	};
+	return [screen, setScreen] as const;
+}
+
 export default function App() {
 	const { rows } = useJobs();
-	const [screen, setScreen] = useState<'main' | 'settings'>('main');
+	const [screen, setScreen] = useScreen();
 	const [tab, setTab] = useStoredChoice<Tab>('jobhunt-local.tab', tabs, 'todo');
 	const [sort, setSort] = useStoredChoice<Sort>('jobhunt-local.sort', sorts, 'fit');
 	const toSend = rows.filter((r) => !isSent(r)).toSorted(sorters[sort]);
