@@ -7,4 +7,4 @@ export { ListSection } from './ListSection';
 export { CompanyAvatar, DeleteButton, FitTicks, LinkButton, MailButton, NoteButton } from './fields';
 export { today, shortDate } from './lib/date';
 export { downloadJson, readBackupFile } from './lib/backup';
-export { say, sayWithUndo } from './lib/notify';
+export { say, sayDone, sayWithUndo } from './lib/notify';

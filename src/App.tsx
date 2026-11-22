@@ -32,7 +32,7 @@ import {
 	ListSection,
 	MailButton,
 	NoteButton,
-	say,
+	sayDone,
 	sayWithUndo,
 	shortDate,
 } from './ui';
@@ -130,7 +130,7 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 								leftSection={<Icon name="check" />}
 								onClick={() => {
 									markSent(r.id);
-									say(t.row.sentToast(name));
+									sayDone(t.row.sentToast(name));
 								}}
 							>
 								{t.row.markSent}

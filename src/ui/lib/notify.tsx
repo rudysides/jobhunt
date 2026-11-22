@@ -10,6 +10,22 @@ export const say = (message: string, color?: string) =>
 		withCloseButton: false,
 	});
 
+/** Success toast: green check and message, same layout as the removal toast. */
+export const sayDone = (message: string) =>
+	notifications.show({
+		withCloseButton: false,
+		message: (
+			<Group gap={8} wrap="nowrap" miw={0}>
+				<Box c="green" display="flex" style={{ flexShrink: 0 }}>
+					<Icon name="check" />
+				</Box>
+				<Text size="sm" truncate>
+					{message}
+				</Text>
+			</Group>
+		),
+	});
+
 /** Removal toast: red x, message and an undo button, open a bit longer than a plain one so there's time to click. */
 export function sayWithUndo(message: string, undoLabel: string, onUndo: () => void) {
 	const id = notifications.show({
