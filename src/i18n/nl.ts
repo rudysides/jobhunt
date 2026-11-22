@@ -14,7 +14,7 @@ export const nl: Messages = {
 		profileHint: 'Waar /find-jobs naar zoekt. Opgeslagen in profile/profile.json, wijzig het in Claude Code met',
 		noProfile: 'Nog geen profiel. Maak er een in Claude Code met',
 		copyCommand: 'Klik om te kopiëren',
-		copied: (cmd: string) => `${cmd} gekopieerd`,
+		copied: (cmd: string) => `${cmd} naar het klembord gekopieerd`,
 		copyFail: 'Kopiëren mislukt, selecteer het met de hand',
 		remote: { no: 'Op locatie', hybrid: 'Hybride / remote', only: 'Alleen remote' },
 		appearance: 'Weergave',

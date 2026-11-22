@@ -14,7 +14,7 @@ export const es: Messages = {
 		profileHint: 'Lo que busca /find-jobs. Guardado en profile/profile.json, cámbialo en Claude Code con',
 		noProfile: 'Aún no hay perfil. Créalo en Claude Code con',
 		copyCommand: 'Haz clic para copiar',
-		copied: (cmd: string) => `${cmd} copiado`,
+		copied: (cmd: string) => `${cmd} copiado al portapapeles`,
 		copyFail: 'No se pudo copiar, selecciónalo a mano',
 		remote: { no: 'Presencial', hybrid: 'Híbrido / remoto', only: 'Solo remoto' },
 		appearance: 'Apariencia',

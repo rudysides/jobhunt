@@ -14,7 +14,7 @@ export const de: Messages = {
 		profileHint: 'Wonach /find-jobs sucht. Gespeichert in profile/profile.json, ändern in Claude Code mit',
 		noProfile: 'Noch kein Profil. Leg eins in Claude Code an mit',
 		copyCommand: 'Klicken zum Kopieren',
-		copied: (cmd: string) => `${cmd} kopiert`,
+		copied: (cmd: string) => `${cmd} in die Zwischenablage kopiert`,
 		copyFail: 'Kopieren fehlgeschlagen, bitte von Hand markieren',
 		remote: { no: 'Vor Ort', hybrid: 'Hybrid / remote', only: 'Nur remote' },
 		appearance: 'Darstellung',

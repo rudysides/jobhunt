@@ -13,7 +13,7 @@ export const en = {
 		profileHint: 'What /find-jobs looks for. Saved in profile/profile.json, change it in Claude Code with',
 		noProfile: 'No profile yet. Create one in Claude Code with',
 		copyCommand: 'Click to copy',
-		copied: (cmd: string) => `Copied ${cmd}`,
+		copied: (cmd: string) => `Copied ${cmd} to clipboard`,
 		copyFail: 'Could not copy, select it by hand',
 		remote: { no: 'On-site', hybrid: 'Hybrid / remote', only: 'Remote only' },
 		appearance: 'Appearance',

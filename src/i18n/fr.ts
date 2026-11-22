@@ -14,7 +14,7 @@ export const fr: Messages = {
 		profileHint: 'Ce que cherche /find-jobs. Enregistré dans profile/profile.json, à modifier dans Claude Code avec',
 		noProfile: 'Pas encore de profil. Crée-le dans Claude Code avec',
 		copyCommand: 'Cliquer pour copier',
-		copied: (cmd: string) => `${cmd} copié`,
+		copied: (cmd: string) => `${cmd} copié dans le presse-papiers`,
 		copyFail: 'Copie impossible, sélectionne-le à la main',
 		remote: { no: 'Sur site', hybrid: 'Hybride / télétravail', only: 'Télétravail uniquement' },
 		appearance: 'Apparence',
