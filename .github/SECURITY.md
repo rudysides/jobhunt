@@ -13,4 +13,4 @@ Please don't open a public issue, and never attach your own CV, `profile/` files
   the dev server, the repository or the Claude Code skills.
 - Crafted leads or backups that run code, inject into `mailto:` links or break the app.
 
-The threat model, past findings and a re-test checklist are in [docs/security-audit.md](docs/security-audit.md).
+The threat model, past findings and a re-test checklist are in [docs/security-audit.md](../docs/security-audit.md).

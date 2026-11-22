@@ -1,4 +1,4 @@
-import { Box, Button, Group, Text } from '@mantine/core';
+import { ActionIcon, Box, Group, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { Icon } from '../icons';
 
@@ -26,7 +26,7 @@ export const sayDone = (message: string) =>
 		),
 	});
 
-/** Removal toast: red x, message and an undo button, open a bit longer than a plain one so there's time to click. */
+/** Removal toast: red x, message and an icon-only undo button, open a bit longer than a plain one so there's time to click. */
 export function sayWithUndo(message: string, undoLabel: string, onUndo: () => void) {
 	const id = notifications.show({
 		withCloseButton: false,
@@ -41,18 +41,18 @@ export function sayWithUndo(message: string, undoLabel: string, onUndo: () => vo
 						{message}
 					</Text>
 				</Group>
-				<Button
-					size="compact-sm"
+				<ActionIcon
 					variant="default"
 					className="hover-accent"
-					leftSection={<Icon name="undo" />}
+					aria-label={undoLabel}
+					title={undoLabel}
 					onClick={() => {
 						onUndo();
 						notifications.hide(id);
 					}}
 				>
-					{undoLabel}
-				</Button>
+					<Icon name="undo" />
+				</ActionIcon>
 			</Group>
 		),
 	});

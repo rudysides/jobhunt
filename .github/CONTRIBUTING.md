@@ -25,12 +25,12 @@ CI runs the same on Linux, macOS and Windows.
 
 ## Rules
 
-They are in [CLAUDE.md](CLAUDE.md), which both people and agents follow. In short:
+They are in [CLAUDE.md](../CLAUDE.md), which both people and agents follow. In short:
 
 - Local only: no backend, network requests, telemetry, CDNs or hosting config.
 - `profile/` is personal and gitignored. `profile/example/` is fictional; keep it that way.
 - Saved data keeps working across 1.x: a format change needs a `version` bump and a `migrate` step in `src/store.ts`,
-  plus a line in [CHANGELOG.md](CHANGELOG.md). See [docs/data.md](docs/data.md).
+  plus a line in [CHANGELOG.md](../CHANGELOG.md). See [docs/data.md](../docs/data.md).
 - Lead, import and link rules live in one place, `src/validate.ts`.
 - UI strings go to `src/i18n/en.ts`. Tabs, single quotes, 120 columns (`pnpm fmt`).
 

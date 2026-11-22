@@ -160,7 +160,7 @@ jobhunt/
 | `pnpm fmt`         | Formats everything with oxfmt                |
 | `pnpm build`       | Compile check only, writes nothing           |
 
-See [CONTRIBUTING.md](CONTRIBUTING.md) to help out.
+See [CONTRIBUTING.md](.github/CONTRIBUTING.md) to help out.
 
 ## 🛡️ What leaves your machine
 

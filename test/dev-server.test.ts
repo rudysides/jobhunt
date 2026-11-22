@@ -1,11 +1,13 @@
 // JL-02: the dev server must not hand the CV, other profile files or dist/ to anyone, nor allow cross-origin reads.
-import { mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { createServer, normalizePath, type ViteDevServer } from 'vite';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 let server: ViteDevServer;
 let base = '';
 const distProbe = 'dist/__dev-server-test.txt';
+// Only remove dist/ afterwards if the test created it.
+const hadDist = existsSync('dist');
 
 beforeAll(async () => {
 	mkdirSync('dist', { recursive: true });
@@ -23,7 +25,7 @@ beforeAll(async () => {
 
 afterAll(async () => {
 	await server?.close();
-	rmSync(distProbe, { force: true });
+	rmSync(hadDist ? distProbe : 'dist', { recursive: true, force: true });
 });
 
 const status = async (path: string) => (await fetch(base + path)).status;
