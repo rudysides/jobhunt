@@ -1,5 +1,5 @@
 /*
- * Settings: profile summary, appearance (theme + accent) and data (backup, import, delete all).
+ * Settings: profile summary, appearance (theme, language, accent) and data (backup, import, delete all).
  * The profile itself is edited with /setup in Claude Code; the app only shows it.
  * Mantine remembers the color scheme itself (localStorage), the accent lives in ui/accent.tsx.
  */
@@ -12,6 +12,7 @@ import {
 	FileButton,
 	Group,
 	Paper,
+	Select,
 	Stack,
 	Text,
 	Title,
@@ -22,7 +23,7 @@ import {
 import { Icon, accents, downloadJson, readBackupFile, say, useAccent, type IconName } from './ui';
 import { profile } from './profile';
 import { normalizeRow, useJobs, type JobRow } from './store';
-import { t } from './i18n';
+import { languages, locale, setLocale, t } from './i18n';
 
 const tp = t.settings;
 
@@ -164,6 +165,16 @@ export function Settings({ onClose }: { onClose: () => void }) {
 						</Button>
 					))}
 				</Group>
+				<Select
+					label={tp.language}
+					data={languages.map((l) => ({ value: l.code, label: l.label }))}
+					value={locale}
+					onChange={(v) => v && v !== locale && setLocale(v)}
+					allowDeselect={false}
+					checkIconPosition="right"
+					w={220}
+					size="xs"
+				/>
 				<Stack gap={6}>
 					<Text size="sm" c="dimmed">
 						{tp.accent}

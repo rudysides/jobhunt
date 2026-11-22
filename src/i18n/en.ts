@@ -1,4 +1,4 @@
-// Every UI string lives here. To add a language: copy this file, translate it, register it in ./index.ts.
+// Every UI string lives here. To add a language: copy this file, translate it, add it to `languages` in ./index.ts.
 export const en = {
 	appTitle: 'Jobhunt',
 	header: {
@@ -20,6 +20,7 @@ export const en = {
 		light: 'Light',
 		dark: 'Dark',
 		system: 'System',
+		language: 'Language',
 		accent: 'Accent color',
 		accents: {
 			blue: 'Blue',

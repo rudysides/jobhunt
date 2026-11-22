@@ -38,7 +38,7 @@ Use AskUserQuestion, at most 4 questions per round, with your draft as the first
 - Exclusions (companies, keywords like "senior"), minimum salary (optional)
 - E-mail template: offer a short template in the CV's language with the `{position} {company} {contactName} {name}` placeholders
 
-Set `locale` to `"en"` (the only UI language so far). `contactEmail` only if the user gives it; never guess it.
+Set `locale` to the UI language: one of `en`, `de`, `fr`, `es`, `it`, `nl`, `pt`, `pl` (see `src/i18n/index.ts`). Use the language the user writes in or asks for; otherwise `"en"`. The user can still switch it in Settings. `contactEmail` only if the user gives it; never guess it.
 
 ## 5. Write and verify
 
