@@ -1,6 +1,6 @@
 # Security audit
 
-**Date:** 2026-11-22 · **Scope:** the working tree before the first commit · **Findings:** 10, nine fixed in 0.9.0,
+**Date:** 2026-11-22 · **Scope:** the working tree before the first commit · **Findings:** 10, nine fixed,
 JL-09 open (optional for 1.0, see [roadmap.md](roadmap.md))
 
 **Audited versions:** Vite 8.3.8, React 19.3.1, Mantine 9.8.1, zustand 5.1.0, TypeScript 7.0.2, Node 26.13, pnpm 12.18
@@ -19,7 +19,7 @@ edges:
 
 All of it can be fixed with small changes and no new runtime dependencies.
 
-| ID    | Severity | Finding                                                             | Status (0.9.0) |
+| ID    | Severity | Finding                                                             | Status         |
 | ----- | -------- | ------------------------------------------------------------------- | -------------- |
 | JL-01 | Medium   | Prompt injection from job postings into an agent that holds the CV  | Fixed          |
 | JL-02 | Medium   | Dev server exposes the raw CV to every localhost origin             | Fixed          |
@@ -204,7 +204,7 @@ script, delete the existing `dist/`.
 the GitHub repository settings.
 
 At audit time there were no commits yet, `profile/` and `dist/` were ignored, and the files that would be staged were
-clean. The gaps were for later, and for other people's forks. Fixed in 0.9.0: CV formats in the root are ignored and
+clean. The gaps were for later, and for other people's forks. Fixed since: CV formats in the root are ignored and
 every commit uses a GitHub noreply address. The CI check and issue templates are on the 1.0 list.
 
 - `/setup` looks for a CV in the repo root, but only `*.pdf` is ignored there. A `cv.docx`, `cv.txt` or `cv.md` in the

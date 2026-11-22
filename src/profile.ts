@@ -33,7 +33,12 @@ export interface Lead {
 	fit?: number;
 }
 
-const files = import.meta.glob<unknown>('../profile/*.json', { eager: true, import: 'default' });
+// `pnpm demo` and the tests use the fictional profile/example/ data, never yours.
+export const isDemo = import.meta.env.MODE === 'demo' || import.meta.env.MODE === 'test';
 
-export const profile = (files['../profile/profile.json'] as Profile | undefined) ?? null;
-export const leads = (files['../profile/leads.json'] as Lead[] | undefined) ?? [];
+const own = import.meta.glob<unknown>('../profile/*.json', { eager: true, import: 'default' });
+const example = import.meta.glob<unknown>('../profile/example/*.json', { eager: true, import: 'default' });
+const pick = (name: string) => (isDemo ? example[`../profile/example/${name}`] : own[`../profile/${name}`]);
+
+export const profile = (pick('profile.json') as Profile | undefined) ?? null;
+export const leads = (pick('leads.json') as Lead[] | undefined) ?? [];

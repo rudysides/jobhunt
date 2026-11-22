@@ -6,6 +6,7 @@
  */
 import { useRef, useState } from 'react';
 import {
+	Badge,
 	Box,
 	Button,
 	Code,
@@ -38,7 +39,7 @@ import {
 import { isSent, mailtoHref, useJobs, type JobRow } from './store';
 import { isEmail, isHttpUrl } from './validate.ts';
 import { Settings } from './Settings';
-import { leads, profile } from './profile';
+import { isDemo, leads, profile } from './profile';
 import { locale, t } from './i18n';
 
 function Row({ r, sent }: { r: JobRow; sent: boolean }) {
@@ -256,14 +257,21 @@ export default function App() {
 					onHome={() => setScreen('main')}
 					actions={
 						screen === 'main' && (
-							<Button
-								variant="default"
-								size="xs"
-								leftSection={<Icon name="sliders" />}
-								onClick={() => setScreen('settings')}
-							>
-								{t.header.settings}
-							</Button>
+							<Group gap="xs" wrap="nowrap">
+								{isDemo && (
+									<Badge variant="outline" color="gray" tt="none" title={t.header.demoHint}>
+										{t.header.demo}
+									</Badge>
+								)}
+								<Button
+									variant="default"
+									size="xs"
+									leftSection={<Icon name="sliders" />}
+									onClick={() => setScreen('settings')}
+								>
+									{t.header.settings}
+								</Button>
+							</Group>
 						)
 					}
 				/>

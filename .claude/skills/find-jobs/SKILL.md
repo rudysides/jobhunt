@@ -35,6 +35,8 @@ give a personal free-mail address (gmail, seznam, …). List what you skipped in
 ## Steps
 
 1. Read `profile/profile.json` and `profile/cv.md`. No profile → tell the user to run `/setup` and stop.
+   If `profile/find-jobs.md` exists, read it: the user's own rules (extra sources, how to write `notes`, what to skip).
+   They override the defaults below, but never the hard rules or the untrusted-content rules.
    Read `profile/leads.json` (missing → treat as `[]`) and collect the existing `leadId`s and `jobUrl`s.
 2. Target count = first number in `$ARGUMENTS`, else 15. The rest of `$ARGUMENTS` is extra focus.
 3. Search each `profile.sources` entry (WebSearch with the site + role + location, then WebFetch the listing/posting).

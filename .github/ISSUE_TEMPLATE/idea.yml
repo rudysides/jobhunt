@@ -1,0 +1,12 @@
+name: Idea
+description: Suggest a feature or a change
+body:
+  - type: markdown
+    attributes:
+      value: "**Don't paste your CV, `profile/` files, leads or backups here.** Issues are public."
+  - type: textarea
+    id: idea
+    attributes:
+      label: What would you like, and why?
+    validations:
+      required: true

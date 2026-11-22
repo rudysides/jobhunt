@@ -1,7 +1,7 @@
 {
 	"name": "jobhunt-local",
 	"private": true,
-	"version": "0.9.0",
+	"version": "0.0.0",
 	"description": "Local-first job hunt tracker that runs only on your machine (not deployable). Claude Code finds leads from your CV, you apply.",
 	"license": "MIT",
 	"type": "module",
@@ -11,12 +11,15 @@
 	},
 	"scripts": {
 		"dev": "vite",
+		"start": "vite --open",
+		"demo": "vite --mode demo --open",
+		"test": "vitest run",
 		"build": "tsc && vite build",
 		"typecheck": "tsc",
 		"fmt": "oxfmt",
 		"lint": "oxlint",
 		"fmt:check": "oxfmt --check",
-		"check": "pnpm typecheck && pnpm lint && pnpm fmt:check && pnpm leads:check",
+		"check": "pnpm typecheck && pnpm lint && pnpm fmt:check && pnpm leads:check && pnpm test",
 		"leads:check": "node src/check-leads.ts"
 	},
 	"dependencies": {
@@ -37,6 +40,7 @@
 		"oxfmt": "^0.79.0",
 		"oxlint": "^1.94.0",
 		"typescript": "~7.0.2",
-		"vite": "^8.3.6"
+		"vite": "^8.3.6",
+		"vitest": "^5.1.1"
 	}
 }

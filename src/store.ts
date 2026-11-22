@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { today } from './ui';
+import { today } from './ui/lib/date';
 import { leads, profile, type Lead } from './profile';
 import { cleanText, isEmail, isHttpUrl } from './validate.ts';
 
@@ -76,14 +76,16 @@ export function normalizeRow(v: unknown): JobRow | null {
 		jobUrl: isHttpUrl(jobUrl) ? jobUrl : '',
 		status: r.status,
 		appliedAt: typeof r.appliedAt === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.appliedAt) ? r.appliedAt : '',
+		...(typeof r.updatedAt === 'string' &&
+			!Number.isNaN(Date.parse(r.updatedAt)) && { updatedAt: cleanText(r.updatedAt, 40) }),
 		...(fit && { fit }),
 	});
 }
 
 /** Leads that are not in the list yet and were not dismissed. */
-const newLeads = (rows: JobRow[], dismissed: string[]) => {
+const newLeads = (rows: JobRow[], dismissed: string[], fileLeads: Lead[] = leads) => {
 	const known = new Set([...rows.map((r) => r.leadId), ...dismissed]);
-	return leads.filter((l) => !known.has(l.leadId)).map(fromLead);
+	return fileLeads.filter((l) => !known.has(l.leadId)).map(fromLead);
 };
 
 const leadIds = new Set(leads.map((l) => l.leadId));
@@ -98,6 +100,39 @@ interface JobsState {
 	restore: (row: JobRow, index: number) => void;
 	replaceAll: (rows: JobRow[], dismissedLeads?: string[]) => void;
 	clearAll: () => void;
+}
+
+type Stored = Pick<JobsState, 'rows' | 'dismissedLeads'>;
+
+/** Upgrades saved state from older versions. v1 → v2: rows got the user's own note. */
+export function migrateStored(persisted: unknown, version: number): Partial<Stored> {
+	const s = (persisted ?? {}) as Partial<Stored>;
+	if (version < 2) return { ...s, rows: (s.rows ?? []).map((r) => ({ ...r, myNotes: r.myNotes ?? '' })) };
+	return s;
+}
+
+/**
+ * Saved state + leads.json on load. New leads go on top, dismissed ones never come back, unsent rows whose lead
+ * disappeared go away, unsent rows refresh their lead fields (keeping the user's note), applied rows stay as they are.
+ */
+export function mergeStored(
+	persisted: Partial<Stored> | undefined,
+	current: Stored,
+	fileLeads: Lead[] = leads
+): Stored {
+	const s = { ...current, ...persisted };
+	const ids = new Set(fileLeads.map((l) => l.leadId));
+	const kept = s.rows.filter((r) => !r.leadId || ids.has(r.leadId) || isSent(r));
+	const byId = new Map(fileLeads.map((l) => [l.leadId, l]));
+	const refreshed = kept.map((r) => {
+		const l = r.leadId ? byId.get(r.leadId) : undefined;
+		// fromLead would blank the user's own note, so keep it.
+		return l && !isSent(r) ? { ...r, ...fromLead(l), id: r.id, myNotes: r.myNotes } : r;
+	});
+	return {
+		rows: [...newLeads(refreshed, s.dismissedLeads, fileLeads), ...refreshed],
+		dismissedLeads: s.dismissedLeads,
+	};
 }
 
 const patchRow = (rows: JobRow[], id: string, patch: Partial<JobRow>) =>
@@ -138,25 +173,8 @@ export const useJobs = create<JobsState>()(
 			// Changing the key or the port (5180) means an empty app; bump `version` and migrate instead.
 			name: 'jobhunt-local.jobs.v1',
 			version: 2,
-			// v1 → v2: rows got the user's own note.
-			migrate: (persisted, version) => {
-				const s = (persisted ?? {}) as Partial<JobsState>;
-				if (version < 2) s.rows = (s.rows ?? []).map((r) => ({ ...r, myNotes: r.myNotes ?? '' }));
-				return s as JobsState;
-			},
-			// New leads from leads.json are added on top. Unsent leads that disappeared from leads.json disappear here too.
-			merge: (persisted, current) => {
-				const s = { ...current, ...(persisted as Partial<JobsState>) };
-				const kept = s.rows.filter((r) => !r.leadId || leadIds.has(r.leadId) || isSent(r));
-				// Refresh lead fields (e.g. fit, notes) from the file for unsent rows, keep the user's status.
-				const byId = new Map(leads.map((l) => [l.leadId, l]));
-				const refreshed = kept.map((r) => {
-					const l = r.leadId ? byId.get(r.leadId) : undefined;
-					// fromLead would blank the user's own note, so keep it.
-					return l && !isSent(r) ? { ...r, ...fromLead(l), id: r.id, myNotes: r.myNotes } : r;
-				});
-				return { ...s, rows: [...newLeads(refreshed, s.dismissedLeads), ...refreshed] };
-			},
+			migrate: (persisted, version) => migrateStored(persisted, version) as JobsState,
+			merge: (persisted, current) => ({ ...current, ...mergeStored(persisted as Stored, current) }),
 		}
 	)
 );

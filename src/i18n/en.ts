@@ -1,7 +1,11 @@
 // Every UI string lives here. To add a language: copy this file, translate it, register it in ./index.ts.
 export const en = {
 	appTitle: 'Jobhunt',
-	header: { settings: 'Settings' },
+	header: {
+		settings: 'Settings',
+		demo: 'Demo data',
+		demoHint: 'Fictional data from profile/example/. Your own data is untouched.',
+	},
 	settings: {
 		title: 'Settings',
 		back: 'Back',

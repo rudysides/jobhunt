@@ -1,0 +1,22 @@
+name: Bug
+description: Something doesn't work
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Don't paste your CV, `profile/` files, leads or backups here.** Issues are public.
+        If you need data to show the bug, use `pnpm demo` and the example data.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened, and what did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+  - type: input
+    id: env
+    attributes:
+      label: OS, browser, Node version
