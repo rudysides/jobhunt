@@ -11,6 +11,7 @@ export interface JobRow extends Omit<Lead, 'leadId' | 'foundAt'> {
 	status: Status;
 	appliedAt: string; // YYYY-MM-DD
 	updatedAt: string;
+	myNotes: string; // the user's own note, never touched by leads.json
 }
 
 export const isSent = (r: JobRow) => r.status !== 'todo';
@@ -31,6 +32,7 @@ function blankRow(partial: Partial<JobRow> = {}): JobRow {
 		notes: '',
 		status: 'todo',
 		appliedAt: '',
+		myNotes: '',
 		updatedAt: new Date().toISOString(),
 		...partial,
 	};
@@ -52,6 +54,7 @@ interface JobsState {
 	markSent: (id: string) => void;
 	unmarkSent: (id: string) => void;
 	remove: (id: string) => void;
+	setNotes: (id: string, text: string) => void;
 	restore: (row: JobRow, index: number) => void;
 	replaceAll: (rows: JobRow[]) => void;
 	clearAll: () => void;
@@ -67,6 +70,7 @@ export const useJobs = create<JobsState>()(
 			dismissedLeads: [],
 			markSent: (id) => set((s) => ({ rows: patchRow(s.rows, id, { status: 'applied', appliedAt: today() }) })),
 			unmarkSent: (id) => set((s) => ({ rows: patchRow(s.rows, id, { status: 'todo', appliedAt: '' }) })),
+			setNotes: (id, text) => set((s) => ({ rows: patchRow(s.rows, id, { myNotes: text }) })),
 			remove: (id) =>
 				set((s) => {
 					const leadId = s.rows.find((r) => r.id === id)?.leadId;
@@ -101,7 +105,8 @@ export const useJobs = create<JobsState>()(
 				const byId = new Map(leads.map((l) => [l.leadId, l]));
 				const refreshed = kept.map((r) => {
 					const l = r.leadId ? byId.get(r.leadId) : undefined;
-					return l && !isSent(r) ? { ...r, ...fromLead(l), id: r.id } : r;
+					// Older saved rows have no myNotes, and fromLead would blank it.
+					return l && !isSent(r) ? { ...r, ...fromLead(l), id: r.id, myNotes: r.myNotes ?? '' } : r;
 				});
 				return { ...s, rows: [...newLeads(refreshed, s.dismissedLeads), ...refreshed] };
 			},

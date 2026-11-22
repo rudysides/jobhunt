@@ -1,6 +1,6 @@
 import { createTheme, rem } from '@mantine/core';
 
-// Calm look: one accent color (blue), gray surfaces, 14 px density.
+// Calm look: one accent color (blue), gray surfaces, 15 px body text.
 // Red and yellow only for problems.
 export const theme = createTheme({
 	primaryColor: 'blue',
@@ -25,10 +25,10 @@ export const theme = createTheme({
 	defaultRadius: 'md',
 	cursorType: 'pointer',
 	fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
-	fontSizes: { xs: rem(12), sm: rem(13), md: rem(14), lg: rem(16), xl: rem(20) },
+	fontSizes: { xs: rem(13), sm: rem(14), md: rem(15), lg: rem(17), xl: rem(20) },
 	headings: {
 		fontWeight: '500',
-		sizes: { h1: { fontSize: rem(20) }, h2: { fontSize: rem(15) }, h3: { fontSize: rem(13) } },
+		sizes: { h1: { fontSize: rem(20) }, h2: { fontSize: rem(16) }, h3: { fontSize: rem(14) } },
 	},
 	components: {
 		Paper: { defaultProps: { withBorder: true, radius: 'lg' } },

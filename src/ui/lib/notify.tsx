@@ -28,6 +28,8 @@ export function sayWithUndo(message: string, undoLabel: string, onUndo: () => vo
 				<Button
 					size="compact-sm"
 					variant="default"
+					className="hover-accent"
+					leftSection={<Icon name="undo" />}
 					onClick={() => {
 						onUndo();
 						notifications.hide(id);

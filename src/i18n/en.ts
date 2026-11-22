@@ -33,7 +33,14 @@ export const en = {
 			"Removes every job and application. Jobs already in leads.json won't come back, only new finds from /find-jobs.",
 		deletedAll: (n: number) => `Deleted ${n} jobs`,
 	},
-	lists: { toSend: 'To apply', sent: 'Applied', allSent: 'Everything sent. Run /find-jobs for more.' },
+	lists: {
+		label: 'Show jobs',
+		toSend: 'To apply',
+		sent: 'Applied',
+		allSent: 'Everything sent. Run /find-jobs for more.',
+		noneSent: 'Nothing applied yet. Mark a job as Applied once you send it.',
+		sort: { label: 'Sort jobs', fit: 'Best fit', newest: 'Newest', company: 'Company A–Z' },
+	},
 	row: {
 		untitled: 'Untitled',
 		viaForm: 'via form',
@@ -44,6 +51,12 @@ export const en = {
 		removedToast: (company: string) => `${company} · removed`,
 		mailTo: (email: string) => `Write to ${email} (attach your CV manually)`,
 		fit: (n: number) => `Fit ${n}/5`,
+		note: {
+			add: 'Add note',
+			edit: 'Edit note',
+			save: 'Save note',
+			placeholder: 'Who replied, interview date, next step…',
+		},
 	},
 	link: { open: 'Open job posting' },
 	del: { tooltip: 'Not a fit, remove', aria: 'Remove' },

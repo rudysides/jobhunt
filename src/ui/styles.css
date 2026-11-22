@@ -3,6 +3,8 @@
 /* The page is one shade darker than the cards. */
 :root[data-mantine-color-scheme='light'] {
 	--app-page: #f8f8f6;
+	/* Mantine's gray-6 is only 3.3:1 on white. This one is 6:1, so secondary text and notes stay readable. */
+	--mantine-color-dimmed: #5c636b;
 }
 :root[data-mantine-color-scheme='dark'] {
 	--app-page: var(--mantine-color-dark-9);
@@ -15,16 +17,25 @@ body {
 	font-variant-numeric: tabular-nums;
 }
 
-/* Row actions stay outlined: on hover the icon and border take the accent, or red for removing. */
+/* Row actions stay outlined: on hover the icon and border take the accent, green for saving, red for removing. */
 @media (hover: hover) {
 	.hover-accent:hover {
 		color: var(--mantine-primary-color-filled);
 		border-color: var(--mantine-primary-color-filled);
 	}
+	.hover-success:hover {
+		color: var(--mantine-color-green-filled);
+		border-color: var(--mantine-color-green-filled);
+	}
 	.hover-danger:hover {
 		color: var(--mantine-color-red-filled);
 		border-color: var(--mantine-color-red-filled);
 	}
+}
+
+/* A segmented control on the page background: its track is nearly the page color, so it gets the card hairline. */
+.page-switch {
+	border: 1px solid var(--mantine-color-default-border);
 }
 
 /* Toasts: no accent bar, a hairline instead. Only error toasts (toast-danger) keep their red bar. */

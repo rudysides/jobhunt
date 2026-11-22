@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import { Group, Title, UnstyledButton } from '@mantine/core';
 
-/** The j mark from public/favicon.svg, inline so the stem follows the app color scheme and the dot the chosen accent. */
+/** The j mark from public/favicon.svg, inline so the stem follows the app color scheme; the dot stays orange. */
 function Logo() {
 	return (
 		<svg width={36} height={36} viewBox="0 0 256 256" aria-hidden>
@@ -10,7 +10,7 @@ function Logo() {
 					fill="var(--mantine-color-text)"
 					d="M182 110V160A78 78 0 0 1 104 238H88A22 22 0 0 1 88 194H104A34 34 0 0 0 138 160V110A22 22 0 0 1 182 110Z"
 				/>
-				<circle cx="160" cy="46" r="26" fill="var(--mantine-primary-color-filled)" />
+				<circle cx="160" cy="46" r="26" fill="var(--mantine-color-orange-6)" />
 			</g>
 		</svg>
 	);
