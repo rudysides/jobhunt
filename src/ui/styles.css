@@ -1,0 +1,16 @@
+/* Mantine (theme.ts) handles most of the look. Only what Mantine lacks lives here. */
+
+/* The page is one shade darker than the cards. */
+:root[data-mantine-color-scheme='light'] {
+	--app-page: #f8f8f6;
+}
+:root[data-mantine-color-scheme='dark'] {
+	--app-page: var(--mantine-color-dark-9);
+}
+body {
+	background: var(--app-page);
+}
+
+.tnum {
+	font-variant-numeric: tabular-nums;
+}

@@ -1,0 +1,25 @@
+{
+	"name": "Alex Example",
+	"contactEmail": "",
+	"headline": "Junior frontend developer (React, TypeScript)",
+	"targetRoles": ["Junior Frontend Developer", "Junior React Developer", "Junior Fullstack Developer"],
+	"seniority": "junior",
+	"locations": ["Prague"],
+	"remote": "hybrid",
+	"languages": ["English", "Czech"],
+	"salaryMin": "",
+	"sources": [
+		{ "id": "startupjobs", "url": "https://www.startupjobs.cz", "notes": "Startups, filters for junior + remote" },
+		{ "id": "jobscz", "url": "https://www.jobs.cz" },
+		{ "id": "weworkremotely", "url": "https://weworkremotely.com" },
+		{ "id": "web", "url": "", "notes": "Company career pages" }
+	],
+	"exclude": { "companies": [], "keywords": ["senior", "lead", "10+ years"] },
+	"mustHave": ["React"],
+	"niceToHave": ["TypeScript", "Next.js", "testing"],
+	"emailTemplate": {
+		"subject": "Application: {position}",
+		"body": "Hello {contactName},\n\nI'm applying for the {position} role at {company}. My CV is attached.\n\n[2-3 sentences: why this company, what you can bring]\n\nI'd be glad to talk.\n\nBest regards,\n{name}"
+	},
+	"locale": "en"
+}

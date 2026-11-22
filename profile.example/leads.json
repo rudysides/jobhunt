@@ -1,0 +1,17 @@
+[
+	{
+		"leadId": "example-co-junior-frontend",
+		"company": "Example Co.",
+		"position": "Junior Frontend Developer",
+		"location": "Prague 7, hybrid",
+		"contactName": "Jana Example",
+		"role": "HR",
+		"email": "",
+		"source": "startupjobs",
+		"jobUrl": "https://example.com/jobs/junior-frontend",
+		"salary": "",
+		"notes": "Fictional example. React + TS, mentoring for juniors, matches your React side project. Apply via the form on the posting.",
+		"foundAt": "2026-01-01",
+		"fit": 4
+	}
+]

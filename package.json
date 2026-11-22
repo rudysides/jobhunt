@@ -1,0 +1,40 @@
+{
+	"name": "jobhunt-local",
+	"private": true,
+	"version": "0.0.0",
+	"description": "Local-first job hunt tracker that runs only on your machine (not deployable). Claude Code finds leads from your CV, you apply.",
+	"license": "MIT",
+	"type": "module",
+	"packageManager": "pnpm@12.18.0",
+	"scripts": {
+		"dev": "vite",
+		"build": "tsc && vite build",
+		"preview": "vite preview",
+		"typecheck": "tsc",
+		"fmt": "oxfmt",
+		"lint": "oxlint",
+		"fmt:check": "oxfmt --check",
+		"check": "pnpm typecheck && pnpm lint && pnpm fmt:check && pnpm leads:check",
+		"leads:check": "node scripts/check-leads.ts"
+	},
+	"dependencies": {
+		"@mantine/core": "9.8.1",
+		"@mantine/dates": "9.8.1",
+		"@mantine/hooks": "9.8.1",
+		"@mantine/notifications": "9.8.1",
+		"dayjs": "1.11.23",
+		"react": "^19.3.1",
+		"react-dom": "^19.3.1",
+		"zustand": "^5.1.0"
+	},
+	"devDependencies": {
+		"@types/node": "^24.19.2",
+		"@types/react": "^19.3.0",
+		"@types/react-dom": "^19.3.0",
+		"@vitejs/plugin-react": "^6.1.2",
+		"oxfmt": "^0.79.0",
+		"oxlint": "^1.94.0",
+		"typescript": "~7.0.2",
+		"vite": "^8.3.6"
+	}
+}

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.env
+*.tsbuildinfo
+.DS_Store
+.claude/settings.local.json
+
+# Your personal data. Never committed.
+profile/
+/*.pdf
