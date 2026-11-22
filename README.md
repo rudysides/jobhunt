@@ -28,10 +28,11 @@ removed stays removed.
 ## How it works
 
 ```
-profile/            gitignored, yours
+profile/            gitignored, yours (except example/)
   profile.json      roles, locations, remote, sources, exclusions, e-mail template
   cv.md             CV text the agent matches postings against
   leads.json        append-only list of postings found by /find-jobs
+  example/          committed fictional samples of the three files
 src/                the app: reads profile/*.json at build time, state in localStorage
 .claude/skills/     /setup and /find-jobs: the actual job hunting logic, edit them to taste
 ```
@@ -62,7 +63,7 @@ It's local-first by design, not a missing feature:
 
 - Search behaviour, sources and the `notes` style: `.claude/skills/find-jobs/SKILL.md`
 - UI text: `src/i18n/en.ts` (add a language by copying it and registering it in `src/i18n/index.ts`)
-- Example data shape: `profile.example/`
+- Example data shape: `profile/example/`
 
 ## Scripts
 

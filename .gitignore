@@ -6,5 +6,12 @@ dist/
 .claude/settings.local.json
 
 # Your personal data. Never committed.
-profile/
+profile/*
+!profile/example/
 /*.pdf
+
+# Third-party skill (kaankiziltug/logo-design-skill), installed locally only.
+.claude/skills/logo-design/
+
+# Third-party skill (glacierphonk/naming), installed locally only.
+.claude/skills/naming/

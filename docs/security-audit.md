@@ -1,7 +1,7 @@
 # Security audit
 
 **Date:** 2026-11-22 · **Scope:** the working tree before the first commit · **Findings:** 10, all open, tracked in
-[ROADMAP.md](../ROADMAP.md)
+[roadmap.md](roadmap.md)
 
 **Audited versions:** Vite 8.3.8, React 19.3.1, Mantine 9.8.1, zustand 5.1.0, TypeScript 7.0.2, Node 26.13, pnpm 12.18
 
@@ -37,7 +37,7 @@ is high everywhere (a CV holds name, contacts and work history), so likelihood d
 
 ## Method
 
-- Manual review of every file that will be committed: `src/`, `scripts/`, `vite.config.ts`, `index.html`, `public/`,
+- Manual review of every file that will be committed: `src/`, `vite.config.ts`, `index.html`, `public/`,
   `.claude/skills/` and the configs.
 - Probes against the running dev server on `127.0.0.1:5180` with `curl`. Only status codes and headers were read,
   never personal content.
@@ -62,7 +62,7 @@ e-mail, roles, locations, minimum salary), `profile/leads.json`, the application
 already runs code as you can read `profile/` directly.
 
 **Accepted by design:** `localStorage` belongs to the origin `http://127.0.0.1:5180`. Any other app you later run on
-that port can read the application history. AGENTS.md documents this; moving to another origin needs a data migration.
+that port can read the application history. CLAUDE.md documents this; moving to another origin needs a data migration.
 
 ## What is already good
 
@@ -141,7 +141,7 @@ Likelihood is low, the impact is the whole CV, and the fix is a few lines.
 ### JL-03 · Low · `mailto:` parameter injection through the `email` field
 
 **Where:** [`src/store.ts:117`](../src/store.ts#L117) puts `r.email` into the URL unencoded.
-[`scripts/check-leads.ts:41`](../scripts/check-leads.ts#L41) accepts `?`, `&`, `,` and `%` in addresses.
+[`src/check-leads.ts:41`](../src/check-leads.ts#L41) accepts `?`, `&`, `,` and `%` in addresses.
 
 **Proof of concept.** Both values pass `pnpm leads:check`:
 
@@ -177,7 +177,7 @@ data** and **Reset app data**.
 
 ### JL-05 · Low · `jobUrl` accepts any URL scheme
 
-**Where:** [`scripts/check-leads.ts`](../scripts/check-leads.ts) has no scheme check;
+**Where:** [`src/check-leads.ts`](../src/check-leads.ts) has no scheme check;
 [`src/ui/fields.tsx:35-52`](../src/ui/fields.tsx#L35-L52) renders any value.
 
 React 19 neutralises `javascript:`, and browsers block web pages from opening `data:` and `file:` URLs at the top level.

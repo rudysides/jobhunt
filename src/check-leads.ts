@@ -1,7 +1,7 @@
 // Validates profile/profile.json and profile/leads.json. Agents run it after every write.
 // Passes on a fresh clone (no profile yet). Usage: pnpm leads:check
 import { existsSync, readFileSync } from 'node:fs';
-import type { Lead, Profile } from '../src/profile.ts';
+import type { Lead, Profile } from './profile.ts';
 
 const errors: string[] = [];
 const read = <T>(path: string): T | null => {

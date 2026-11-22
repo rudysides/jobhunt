@@ -15,7 +15,7 @@
 		"lint": "oxlint",
 		"fmt:check": "oxfmt --check",
 		"check": "pnpm typecheck && pnpm lint && pnpm fmt:check && pnpm leads:check",
-		"leads:check": "node scripts/check-leads.ts"
+		"leads:check": "node src/check-leads.ts"
 	},
 	"dependencies": {
 		"@mantine/core": "9.8.1",

@@ -5,7 +5,7 @@ app shows them as two lists, and you apply yourself.
 
 This roadmap is for everyone following the project: people who want to know when it's ready to use, and developers who
 want to help. **Where it stands (November 2026):** the app and both skills work end to end on the author's machine,
-nothing is released yet, and a [security audit](docs/security-audit.md) found two medium and five low issues plus three
+nothing is released yet, and a [security audit](security-audit.md) found two medium and five low issues plus three
 hardening notes, none critical.
 
 Sizes: **S** is an hour or two, **M** about a day, **L** several days. `JL-xx` refers to a finding in the audit.
@@ -57,7 +57,7 @@ Must land before the repository goes public.
 
 ## Milestone 3 · Usable by anybody
 
-- [ ] **Demo mode** · M. `pnpm demo` runs the app with the fictional `profile.example/` data on its own port, so it
+- [ ] **Demo mode** · M. `pnpm demo` runs the app with the fictional `profile/example/` data on its own port, so it
       never touches your real data. Try it before `/setup`, take screenshots safely, develop without a profile.
 - [ ] **README for non-developers** · M. A screenshot or short GIF from demo mode. What you need: a Claude subscription
       or API account, Git, Node 24+ and pnpm. Step-by-step install for macOS, Windows and Linux (Node 25+ no longer
@@ -87,7 +87,7 @@ Must land before the repository goes public.
 
 - [ ] **Project files** · S. `LICENSE` (MIT, as `package.json` says; the file is missing), `SECURITY.md` (how to report
       a vulnerability, threat model summary), `CONTRIBUTING.md` (setup with demo data, `pnpm check`, the rules from
-      `AGENTS.md`), issue templates with a "don't paste your CV, leads or backups" notice, a PR template with a
+      `CLAUDE.md`), issue templates with a "don't paste your CV, leads or backups" notice, a PR template with a
       checklist, `CHANGELOG.md`.
 - [ ] **GitHub settings** · S. Private vulnerability reporting, Dependabot alerts, secret scanning with push
       protection, a ruleset on `main` (CI required, no force pushes), description, topics, a social preview image from
@@ -95,7 +95,7 @@ Must land before the repository goes public.
 - [ ] **Fresh-eyes test** · M. Someone who isn't the author, ideally not a developer, installs it on a clean machine
       using only the README. Fix every stumble.
 - [ ] **Final checks** · S. Every `JL-xx` finding closed and re-tested with the
-      [re-test checklist](docs/security-audit.md#re-test-checklist), `pnpm audit` clean, no personal data and the
+      [re-test checklist](security-audit.md#re-test-checklist), `pnpm audit` clean, no personal data and the
       intended author e-mail in `git log -p`.
 - [ ] **Release** · S. `"version": "1.0.0"`, tag `v1.0.0`, GitHub release notes (what it is, requirements, privacy
       statement), make the repository public.
