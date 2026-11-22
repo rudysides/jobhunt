@@ -1,23 +1,56 @@
-import { useEffect, useState } from 'react';
-import { ActionIcon, Avatar, Button, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Avatar, Box, Text, Tooltip } from '@mantine/core';
 import { Icon } from './icons';
 
-/** Company initials avatar. */
+// Avatar colors, hashed from the company name. Red and yellow stay out: they belong to problems.
+const avatarColors = ['blue', 'cyan', 'teal', 'green', 'lime', 'orange', 'pink', 'grape', 'violet', 'indigo'];
+
+/** Company initials avatar, the color stays the same for the same company. */
 export function CompanyAvatar({ name }: { name: string }) {
+	const base = name.replace(/\s+(a\.s\.|s\.r\.o\.|spol\..*|gmbh|ltd\.?|inc\.?)$/i, '');
 	const initials =
-		name
-			.replace(/\s+(a\.s\.|s\.r\.o\.|spol\..*|gmbh|ltd\.?|inc\.?)$/i, '')
+		base
 			.split(/[\s,]+/)
 			.filter(Boolean)
 			.slice(0, 2)
 			.map((w) => w[0]!.toUpperCase())
 			.join('') || '?';
 	return (
-		<Avatar size={32} radius="xl" color="blue" variant="light" aria-hidden>
-			<Text size="xs" fw={600} c="inherit">
+		<Avatar
+			size={32}
+			radius="xl"
+			name={base}
+			color="initials"
+			allowedInitialsColors={avatarColors}
+			variant="filled"
+			style={{ flexShrink: 0 }}
+			aria-hidden
+		>
+			<Text size="xs" fw={500} c="inherit">
 				{initials}
 			</Text>
 		</Avatar>
+	);
+}
+
+/**
+ * Fit score as five pencil ticks. Only a perfect fit gets the accent, everything else stays neutral,
+ * so the best leads stand out in a list where most rows score 4.
+ */
+export function FitTicks({ fit, label }: { fit: number; label: string }) {
+	const on = fit >= 5 ? 'var(--mantine-primary-color-filled)' : 'var(--mantine-color-dimmed)';
+	return (
+		<Box component="span" role="img" aria-label={label} title={label} display="inline-flex" style={{ gap: 2 }}>
+			{[1, 2, 3, 4, 5].map((i) => (
+				<Box
+					key={i}
+					component="span"
+					w={3}
+					h={12}
+					bg={i <= fit ? on : 'var(--mantine-color-default-border)'}
+					style={{ borderRadius: 2 }}
+				/>
+			))}
+		</Box>
 	);
 }
 
@@ -25,7 +58,15 @@ export function CompanyAvatar({ name }: { name: string }) {
 export function MailButton({ href, label }: { href: string; label: string }) {
 	return (
 		<Tooltip label={label}>
-			<ActionIcon component="a" href={href} variant="default" color="gray" size="lg" aria-label={label}>
+			<ActionIcon
+				component="a"
+				href={href}
+				variant="default"
+				color="gray"
+				className="hover-accent"
+				size="lg"
+				aria-label={label}
+			>
 				<Icon name="mail" />
 			</ActionIcon>
 		</Tooltip>
@@ -42,6 +83,7 @@ export function LinkButton({ href, label = 'Open job posting' }: { href: string;
 				rel="noreferrer"
 				variant="default"
 				color="gray"
+				className="hover-accent"
 				size="lg"
 				aria-label={label}
 			>
@@ -51,29 +93,26 @@ export function LinkButton({ href, label = 'Open job posting' }: { href: string;
 	);
 }
 
-const deleteLabels = { tooltip: 'Not a fit (remove)', confirm: 'Remove?', aria: 'Remove' };
+const deleteLabels = { tooltip: 'Not a fit, remove', aria: 'Remove' };
 
-// Double click instead of a confirm dialog.
+// Removes right away, the caller offers undo in a toast instead of asking first.
 export function DeleteButton({
-	onConfirm,
+	onRemove,
 	labels = deleteLabels,
 }: {
-	onConfirm: () => void;
+	onRemove: () => void;
 	labels?: typeof deleteLabels;
 }) {
-	const [armed, setArmed] = useState(false);
-	useEffect(() => {
-		if (!armed) return;
-		const t = setTimeout(() => setArmed(false), 2500);
-		return () => clearTimeout(t);
-	}, [armed]);
-	return armed ? (
-		<Button size="compact-xs" color="red" variant="light" onClick={onConfirm}>
-			{labels.confirm}
-		</Button>
-	) : (
+	return (
 		<Tooltip label={labels.tooltip}>
-			<ActionIcon variant="default" color="gray" size="lg" aria-label={labels.aria} onClick={() => setArmed(true)}>
+			<ActionIcon
+				variant="default"
+				color="gray"
+				className="hover-danger"
+				size="lg"
+				aria-label={labels.aria}
+				onClick={onRemove}
+			>
 				<Icon name="x" />
 			</ActionIcon>
 		</Tooltip>

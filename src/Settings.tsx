@@ -56,7 +56,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 	const { accent, setAccent } = useAccent();
 	const [armed, setArmed] = useState(false);
 
-	// The delete confirmation turns itself off after a while (like DeleteButton).
+	// The delete confirmation turns itself off after a while.
 	useEffect(() => {
 		if (!armed) return;
 		const id = setTimeout(() => setArmed(false), 4000);
@@ -112,9 +112,9 @@ export function Settings({ onClose }: { onClose: () => void }) {
 					</Text>
 				)}
 				{pills.length > 0 && (
-					<Group gap={6}>
+					<Group gap={8}>
 						{pills.map((p) => (
-							<Badge key={p.key} variant="default" tt="none" leftSection={<Icon name={p.icon} size={12} />}>
+							<Badge key={p.key} variant="default" tt="none" leftSection={<Icon name={p.icon} size={14} />}>
 								{p.label}
 							</Badge>
 						))}
@@ -168,20 +168,20 @@ export function Settings({ onClose }: { onClose: () => void }) {
 					<Button
 						variant="default"
 						size="xs"
-						leftSection={<Icon name="download" size={14} />}
+						leftSection={<Icon name="download" />}
 						onClick={() => downloadJson({ exportedAt: new Date().toISOString(), rows })}
 					>
 						{tp.backup}
 					</Button>
 					<FileButton onChange={importJson} accept="application/json">
 						{(props) => (
-							<Button {...props} variant="default" size="xs" leftSection={<Icon name="upload" size={14} />}>
+							<Button {...props} variant="default" size="xs" leftSection={<Icon name="upload" />}>
 								{tp.import}
 							</Button>
 						)}
 					</FileButton>
 				</Group>
-				<Stack gap={4}>
+				<Stack gap={12}>
 					<Group gap="xs">
 						{armed ? (
 							<Button size="xs" color="red" onClick={deleteAll}>
@@ -190,9 +190,10 @@ export function Settings({ onClose }: { onClose: () => void }) {
 						) : (
 							<Button
 								size="xs"
-								color="red"
-								variant="light"
-								leftSection={<Icon name="x" size={14} />}
+								variant="default"
+								c="red"
+								className="hover-danger"
+								leftSection={<Icon name="x" />}
 								disabled={rows.length === 0}
 								onClick={() => setArmed(true)}
 							>

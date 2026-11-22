@@ -52,6 +52,7 @@ interface JobsState {
 	markSent: (id: string) => void;
 	unmarkSent: (id: string) => void;
 	remove: (id: string) => void;
+	restore: (row: JobRow, index: number) => void;
 	replaceAll: (rows: JobRow[]) => void;
 	clearAll: () => void;
 }
@@ -74,6 +75,12 @@ export const useJobs = create<JobsState>()(
 						dismissedLeads: leadId ? [...s.dismissedLeads, leadId] : s.dismissedLeads,
 					};
 				}),
+			// Undo of remove: back at its old place, and its lead is no longer dismissed.
+			restore: (row, index) =>
+				set((s) => ({
+					rows: s.rows.some((r) => r.id === row.id) ? s.rows : s.rows.toSpliced(index, 0, row),
+					dismissedLeads: s.dismissedLeads.filter((l) => l !== row.leadId),
+				})),
 			replaceAll: (rows) => set({ rows: rows.map((r) => blankRow(r)) }),
 			// Deletes everything and dismisses every known lead, so leads.json doesn't re-add them on reload.
 			clearAll: () =>

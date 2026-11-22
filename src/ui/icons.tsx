@@ -1,4 +1,4 @@
-// Small monochrome icons (16 px, 1.2 stroke) drawn in the text color.
+// Small monochrome icons (16 px, 1.5 stroke) drawn in the text color.
 const paths = {
 	clock: 'M8 4.5V8l2.5 1.5M14 8A6 6 0 1 1 2 8a6 6 0 0 1 12 0z',
 	calendar: 'M2.5 5.5h11M5 1.5v2M11 1.5v2M3.5 3h9a1 1 0 0 1 1 1v8.5a1 1 0 0 1-1 1h-9a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z',
@@ -30,7 +30,7 @@ export function Icon({ name, size = 16 }: { name: IconName; size?: number }) {
 			viewBox="0 0 16 16"
 			fill="none"
 			stroke="currentColor"
-			strokeWidth={1.2}
+			strokeWidth={1.5}
 			strokeLinecap="round"
 			strokeLinejoin="round"
 			aria-hidden

@@ -8,7 +8,7 @@ export const theme = createTheme({
 	// Light accents (orange, cyan) get dark text so it stays readable.
 	autoContrast: true,
 	colors: {
-		// Dark mode: pure black page (9), near-black cards (7), muted borders (4).
+		// Dark mode: near-black page (9), cards one step up (7), muted borders (4). Depth from steps, not shadows.
 		dark: [
 			'#d4d8de',
 			'#a8aeb8',
@@ -16,10 +16,10 @@ export const theme = createTheme({
 			'#5a606b',
 			'#2b2f36',
 			'#1f2228',
-			'#16181c',
-			'#0c0d10',
-			'#060708',
-			'#000000',
+			'#1a1c21',
+			'#131418',
+			'#0e0f12',
+			'#0a0b0d',
 		],
 	},
 	defaultRadius: 'md',
@@ -27,7 +27,7 @@ export const theme = createTheme({
 	fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif',
 	fontSizes: { xs: rem(12), sm: rem(13), md: rem(14), lg: rem(16), xl: rem(20) },
 	headings: {
-		fontWeight: '600',
+		fontWeight: '500',
 		sizes: { h1: { fontSize: rem(20) }, h2: { fontSize: rem(15) }, h3: { fontSize: rem(13) } },
 	},
 	components: {

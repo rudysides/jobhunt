@@ -5,16 +5,18 @@
  * removed ones never come back. Mail opens a prefilled e-mail (attach your CV manually), link opens the posting.
  */
 import { useState } from 'react';
-import { Badge, Box, Button, Code, Container, Flex, Group, Paper, Stack, Text, Title } from '@mantine/core';
+import { Box, Button, Code, Container, Flex, Group, Paper, Stack, Text, Title } from '@mantine/core';
 import {
 	AppHeader,
 	CompanyAvatar,
 	DeleteButton,
+	FitTicks,
 	Icon,
 	LinkButton,
 	ListSection,
 	MailButton,
 	say,
+	sayWithUndo,
 	shortDate,
 } from './ui';
 import { isSent, mailtoHref, useJobs, type JobRow } from './store';
@@ -23,38 +25,35 @@ import { leads, profile } from './profile';
 import { locale, t } from './i18n';
 
 function Row({ r, sent }: { r: JobRow; sent: boolean }) {
-	const { markSent, unmarkSent, remove } = useJobs();
+	const { markSent, unmarkSent, remove, restore } = useJobs();
 	const name = r.company || t.row.untitled;
 	const sub = sent
 		? [r.position, r.appliedAt && t.row.sentOn(shortDate(r.appliedAt, locale))]
 		: [r.position, r.location, r.email ? '' : t.row.viaForm];
 	return (
 		// Sent rows are short, so the buttons stay next to the text even on mobile.
-		<Flex align="center" gap={12} py={10} wrap={sent ? 'nowrap' : { base: 'wrap', sm: 'nowrap' }}>
-			<Box visibleFrom="sm">
+		<Flex align="center" gap={12} py={12} wrap={sent ? 'nowrap' : { base: 'wrap', sm: 'nowrap' }}>
+			{/* Avatar and text stay on one line, only the buttons wrap below on mobile. */}
+			<Flex align="center" gap={12} flex={sent ? '1 1 0' : { base: '1 1 100%', sm: '1 1 0' }} miw={0}>
 				<CompanyAvatar name={name} />
-			</Box>
-			<Box flex={sent ? '1 1 0' : { base: '1 1 100%', sm: '1 1 0' }} miw={0}>
-				<Group gap={8} wrap="nowrap">
-					<Text fw={500} truncate>
-						{name}
+				<Box flex="1 1 0" miw={0}>
+					<Group gap={12} wrap="nowrap">
+						<Text fw={500} truncate>
+							{name}
+						</Text>
+						{!sent && r.fit && <FitTicks fit={r.fit} label={t.row.fit(r.fit)} />}
+					</Group>
+					<Text size="sm" c="dimmed" truncate>
+						{sub.filter(Boolean).join(' · ')}
 					</Text>
-					{!sent && r.fit && (
-						<Badge size="xs" variant="light" color={r.fit >= 4 ? 'blue' : 'gray'} style={{ flexShrink: 0 }}>
-							{t.row.fit(r.fit)}
-						</Badge>
+					{!sent && r.notes && (
+						<Text size="xs" c="dimmed" lineClamp={2} mt={2}>
+							{r.notes}
+						</Text>
 					)}
-				</Group>
-				<Text size="sm" c="dimmed" truncate>
-					{sub.filter(Boolean).join(' · ')}
-				</Text>
-				{!sent && r.notes && (
-					<Text size="xs" c="dimmed" lineClamp={2} mt={2}>
-						{r.notes}
-					</Text>
-				)}
-			</Box>
-			<Group gap={10} wrap="nowrap" ml={{ base: 'auto', sm: 0 }}>
+				</Box>
+			</Flex>
+			<Group gap={8} wrap="nowrap" ml={{ base: 'auto', sm: 0 }}>
 				{!sent && r.email && <MailButton href={mailtoHref(r)} label={t.row.mailTo(r.email)} />}
 				{r.jobUrl && <LinkButton href={r.jobUrl} label={t.link.open} />}
 				{sent ? (
@@ -63,11 +62,20 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 					</Button>
 				) : (
 					<>
-						<DeleteButton onConfirm={() => remove(r.id)} labels={t.del} />
+						<DeleteButton
+							labels={t.del}
+							onRemove={() => {
+								const index = useJobs.getState().rows.findIndex((x) => x.id === r.id);
+								remove(r.id);
+								sayWithUndo(t.row.removedToast(name), t.row.undo, () => restore(r, index));
+							}}
+						/>
 						<Button
 							variant="default"
+							c="var(--mantine-primary-color-filled)"
+							className="hover-accent"
 							size="xs"
-							leftSection={<Icon name="send" size={14} />}
+							leftSection={<Icon name="check" />}
 							onClick={() => {
 								markSent(r.id);
 								say(t.row.sentToast(name));
@@ -121,7 +129,7 @@ export default function App() {
 							<Button
 								variant="default"
 								size="xs"
-								leftSection={<Icon name="sliders" size={14} />}
+								leftSection={<Icon name="sliders" />}
 								onClick={() => setScreen('settings')}
 							>
 								{t.header.settings}

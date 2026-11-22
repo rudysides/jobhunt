@@ -14,3 +14,24 @@ body {
 .tnum {
 	font-variant-numeric: tabular-nums;
 }
+
+/* Row actions stay outlined: on hover the icon and border take the accent, or red for removing. */
+@media (hover: hover) {
+	.hover-accent:hover {
+		color: var(--mantine-primary-color-filled);
+		border-color: var(--mantine-primary-color-filled);
+	}
+	.hover-danger:hover {
+		color: var(--mantine-color-red-filled);
+		border-color: var(--mantine-color-red-filled);
+	}
+}
+
+/* Toasts: no accent bar, a hairline instead. Only error toasts (toast-danger) keep their red bar. */
+.mantine-Notification-root:not(.toast-danger) {
+	padding-inline-start: var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-default-border);
+}
+.mantine-Notification-root:not(.toast-danger)::before {
+	display: none;
+}

@@ -27,7 +27,7 @@ export function ListSection<T>({
 	const head = prepend ?? [];
 	return (
 		<Paper p="md" px="lg">
-			<Group justify="space-between" mb={4}>
+			<Group justify="space-between" mb={8}>
 				<Group gap={8} align="baseline">
 					<Title order={2}>{title}</Title>
 					<Text c="dimmed" className="tnum">
