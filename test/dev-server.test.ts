@@ -6,12 +6,21 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 let server: ViteDevServer;
 let base = '';
 const distProbe = 'dist/__dev-server-test.txt';
+// Probes in profile/ (gitignored): a top-level CV and logo files, removed again afterwards.
+const probes = {
+	cv: 'profile/__dev-server-test-cv.md',
+	png: 'profile/logos/__dev-server-test.png',
+	svg: 'profile/logos/__dev-server-test.svg',
+	txt: 'profile/logos/__dev-server-test.txt',
+};
 // Only remove dist/ afterwards if the test created it.
 const hadDist = existsSync('dist');
 
 beforeAll(async () => {
 	mkdirSync('dist', { recursive: true });
 	writeFileSync(distProbe, 'x');
+	mkdirSync('profile/logos', { recursive: true });
+	for (const p of Object.values(probes)) writeFileSync(p, 'x');
 	// Own cache and no dependency scan, so it never disturbs a running `pnpm dev`.
 	server = await createServer({
 		server: { port: 0, strictPort: false },
@@ -26,6 +35,7 @@ beforeAll(async () => {
 afterAll(async () => {
 	await server?.close();
 	rmSync(hadDist ? distProbe : 'dist', { recursive: true, force: true });
+	for (const p of Object.values(probes)) rmSync(p, { force: true });
 });
 
 const status = async (path: string) => (await fetch(base + path)).status;
@@ -36,6 +46,14 @@ describe('dev server', () => {
 		// Vite's /@fs/ form of an absolute path: /@fs/Users/… on macOS and Linux, /@fs/D:/… on Windows.
 		const abs = normalizePath(process.cwd()).replace(/^\//, '');
 		expect(await status(`/@fs/${abs}/profile/example/cv.md`)).toBe(403);
+	});
+
+	it('denies the CV at the top of profile/', async () => expect(await status(`/${probes.cv}`)).toBe(403));
+
+	it('serves logo images but no SVG or other files in profile/logos/', async () => {
+		expect(await status(`/${probes.png}`)).toBe(200);
+		expect(await status(`/${probes.svg}`)).toBe(403);
+		expect(await status(`/${probes.txt}`)).toBe(403);
 	});
 
 	it('denies dist/', async () => expect(await status(`/${distProbe}`)).toBe(403));

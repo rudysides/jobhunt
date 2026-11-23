@@ -44,9 +44,10 @@ export const profile = (pick('profile.json') as Profile | undefined) ?? null;
 export const leads = (pick('leads.json') as Lead[] | undefined) ?? [];
 
 // Company logos, downloaded once by /find-jobs into profile/logos/<companySlug>.<ext>. Never fetched at runtime.
+// No SVG: opened directly, an SVG from a company site could run scripts as this app.
 const logoFiles = isDemo
 	? {}
-	: import.meta.glob<string>('../profile/logos/*.{png,jpg,webp,svg,ico}', {
+	: import.meta.glob<string>('../profile/logos/*.{png,jpg,webp,ico}', {
 			eager: true,
 			query: '?url',
 			import: 'default',
@@ -55,9 +56,12 @@ export const logos: Record<string, string> = Object.fromEntries(
 	Object.entries(logoFiles).map(([path, url]) => [path.replace(/^.*\/|\.[^.]+$/g, ''), url])
 );
 
-/** Company name without its legal form (s.r.o., a.s., GmbH, …). */
-export const companyBase = (name: string) =>
-	name.trim().replace(/[\s,]+(a\.\s?s\.|s\.\s?r\.\s?o\.|s\.p\.|spol\..*|gmbh|ltd\.?|inc\.?|llc)$/i, '');
+// Legal forms the find-jobs skill strips for logo file names (step 7). Keep both lists in sync.
+const LEGAL_FORM =
+	/[\s,]+(a\.\s?s\.|s\.\s?r\.\s?o\.|s\.\s?p\.\s?a\.|s\.\s?r\.\s?l\.|s\.\s?p\.|s\.\s?[al]\.|spol\..*|sp\.\s?z\s?o\.\s?o\.|[bn]\.\s?v\.|gmbh|ag|sarl|sas|lda|ltd\.?|inc\.?|llc)$/i;
+
+/** Company name without its legal form (s.r.o., a.s., GmbH, B.V., …). */
+export const companyBase = (name: string) => name.trim().replace(LEGAL_FORM, '');
 
 /** File name for a company's logo: "Seznam.cz, a.s." → "seznam-cz". */
 export const companySlug = (name: string) =>

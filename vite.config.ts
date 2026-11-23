@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => ({
 				'**/.git/**',
 				`${own('profile')}/!(*.json)`,
 				`${own('profile')}/!(logos)/**/!(*.json)`,
-				`${own('profile')}/logos/**/!(*.{png,jpg,webp,svg,ico})`,
+				`${own('profile')}/logos/**/!(*.{png,jpg,webp,ico})`,
 				`${own('dist')}/**`,
 			],
 		},

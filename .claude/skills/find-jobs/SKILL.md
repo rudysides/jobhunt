@@ -71,8 +71,9 @@ give a personal free-mail address (gmail, seznam, gmx, web.de, wp.pl, libero, �
    S.r.l., B.V., N.V., Lda, sp. z o.o., Ltd, Inc, LLC), diacritics dropped,
    lowercase, non-alphanumerics → `-` (`Seznam.cz, a.s.` → `seznam-cz`). Take the company logo from the posting page
    or the `apple-touch-icon` / `icon` the company's own homepage links to (`https` only, prefer square, ≥ 96 px):
-   `mkdir -p profile/logos && curl -sSfL --max-filesize 200000 -o profile/logos/<slug>.<png|jpg|webp|svg|ico> '<url>'`,
-   then `file profile/logos/<slug>.*`; not an image → `rm` it. `/find-jobs logos` does only this step for existing leads.
+   `mkdir -p profile/logos && curl -sSfL --max-filesize 200000 -o profile/logos/<slug>.<png|jpg|webp|ico> '<url>'`,
+   then `file profile/logos/<slug>.*`; anything but PNG, JPEG, WebP or ICO → `rm` it. Never save an SVG: it can carry
+   scripts. When a company only has an SVG logo, skip it. `/find-jobs logos` does only this step for existing leads.
 8. Report: `+N new leads` and a short table (company · position · fit), plus sources that failed or were empty.
    Remind: reload http://127.0.0.1:5180.
 
