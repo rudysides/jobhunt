@@ -8,6 +8,7 @@ Everything stays on your computer, in two places.
 | CV text                 | `profile/cv.md`                                         | `/setup`     |
 | Found jobs (leads)      | `profile/leads.json`                                    | `/find-jobs` |
 | Your own search rules   | `profile/find-jobs.md` (optional)                       | you          |
+| Company logos           | `profile/logos/<company>.png` (or jpg, webp, ico)       | `/find-jobs` |
 | Applied, removed, notes | browser `localStorage` on `127.0.0.1:5180`              | the app      |
 | View choices            | `localStorage`: `jobhunt-local.tab`, `.sort`, `.accent` | the app      |
 

@@ -9,6 +9,11 @@ First public release.
 - `/setup` builds the search profile from your CV; `/find-jobs` appends leads and skips likely scams.
 - Backup and import with checks and a confirm step; backups include removed jobs.
 - `pnpm demo` with fictional data, `pnpm start` opens the app.
+- Add a job by hand (**Add job** above the list), straight to **To apply** or **Applied**, and edit it later.
+  Jobs you add stay yours: `leads.json` never changes or removes them, and backups include them.
+- Company logos: `/find-jobs` saves them to `profile/logos/` (PNG, JPEG, WebP or ICO, never SVG), initials otherwise.
+- Notes on applied jobs are edited in place.
+- `/find-jobs` knows job boards across Europe, the UK, the US and Brazil.
 - English and Czech UI, switchable in Settings.
 - The search profile in Settings shows every part, each row copies the `/setup <part>` command that changes just that
   part. `/setup` also takes a change in your own words.

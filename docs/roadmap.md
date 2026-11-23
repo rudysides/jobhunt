@@ -31,5 +31,5 @@ Done beyond the plan: Czech UI.
 
 ## After 1.0
 
-Ideas, not promises: interview / offer / rejected stages, adding a job by hand, CSV export, more languages, a desktop
+Ideas, not promises: interview / offer / rejected stages, CSV export, more languages, a desktop
 app without Node.

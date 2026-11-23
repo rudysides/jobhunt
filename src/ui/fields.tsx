@@ -150,6 +150,24 @@ export function NoteButton({
 	);
 }
 
+/** Opens the edit form of a job the user added by hand. */
+export function EditButton({ label, onClick }: { label: string; onClick: () => void }) {
+	return (
+		<Tooltip label={label}>
+			<ActionIcon
+				variant="default"
+				color="gray"
+				className="hover-accent"
+				size="lg"
+				aria-label={label}
+				onClick={onClick}
+			>
+				<Icon name="pencil" />
+			</ActionIcon>
+		</Tooltip>
+	);
+}
+
 const deleteLabels = { tooltip: 'Not a fit, remove', aria: 'Remove' };
 
 // Removes right away, the caller offers undo in a toast instead of asking first.

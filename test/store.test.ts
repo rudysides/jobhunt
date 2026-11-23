@@ -140,6 +140,23 @@ describe('store actions', () => {
 		useJobs.getState().replaceAll([row('z')], ['q']);
 		expect(useJobs.getState().dismissedLeads).toEqual(['q']);
 	});
+	it('adds a job by hand on top; leads.json, removing and a backup round trip leave it alone', () => {
+		const own = normalizeRow({ status: 'todo', company: 'Own Co', position: 'Dev', leadId: null, email: 'bad@' })!;
+		expect(own.email).toBe('');
+		useJobs.getState().add(own);
+		expect(ids()).toEqual([null, 'a', 'b', 'c']);
+		useJobs.getState().update(own.id, { position: 'Frontend Dev' });
+		expect(useJobs.getState().rows[0]).toMatchObject({ company: 'Own Co', position: 'Frontend Dev', leadId: null });
+
+		const merged = mergeStored(useJobs.getState(), empty, [lead('a'), lead('b'), lead('c'), lead('d')]);
+		expect(merged.rows.map((r) => r.leadId)).toEqual(['d', null, 'a', 'b', 'c']);
+
+		const restored = JSON.parse(JSON.stringify(useJobs.getState().rows)).map(normalizeRow);
+		expect(restored[0]).toMatchObject({ id: own.id, company: 'Own Co', leadId: null });
+
+		useJobs.getState().remove(own.id);
+		expect(useJobs.getState().dismissedLeads).toEqual([]);
+	});
 });
 
 describe('mailtoHref', () => {

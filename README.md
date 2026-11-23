@@ -45,6 +45,7 @@ nothing is ever sent for you.
 - 🔎 `/find-jobs`: searches job boards and adds matching postings, skipping likely scams
 - ⭐ Each job has a fit score from 1 to 5 and notes on why it fits and how to apply
 - ✉️ A prefilled e-mail per job, using only addresses printed on the posting
+- ➕ Add a job by hand when you find one yourself
 - 📋 Two lists, **To apply** and **Applied**: sort by fit, newest or company, undo a remove, add your own notes
 - 💾 Everything stays in your browser and the `profile/` folder, with **Backup** / **Import** to move it
 - 🧪 `pnpm demo` to try it with fictional data first

@@ -25,6 +25,7 @@ import {
 	AppHeader,
 	CompanyAvatar,
 	DeleteButton,
+	EditButton,
 	FitTicks,
 	Icon,
 	LinkButton,
@@ -38,12 +39,15 @@ import {
 import { isSent, mailtoHref, useJobs, type JobRow } from './store';
 import { isEmail, isHttpUrl } from './validate.ts';
 import { Settings } from './Settings';
+import { JobForm } from './AddJob';
 import { isDemo, leads, profile } from './profile';
 import { locale, t } from './i18n';
 
 function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 	const { markSent, unmarkSent, remove, restore, setNotes } = useJobs();
 	const [editing, setEditing] = useState(false);
+	const [editingJob, setEditingJob] = useState(false);
+	const own = !r.leadId;
 	const noteRef = useRef<HTMLTextAreaElement>(null);
 	const cancelled = useRef(false);
 	const myNotes = r.myNotes ?? '';
@@ -58,7 +62,9 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 	};
 	// The position reads in the text color, the rest of the line is dimmed.
 	const details = (
-		sent ? [r.appliedAt && t.row.sentOn(shortDate(r.appliedAt, locale))] : [r.location, r.email ? '' : t.row.viaForm]
+		sent
+			? [r.appliedAt && t.row.sentOn(shortDate(r.appliedAt, locale)), own && t.row.own]
+			: [r.location, r.email ? '' : t.row.viaForm, own && t.row.own]
 	).filter(Boolean);
 	return (
 		<Box py={12}>
@@ -106,6 +112,7 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 						/>
 					)}
 					{isHttpUrl(r.jobUrl) && <LinkButton href={r.jobUrl} label={t.link.open} />}
+					{own && <EditButton label={t.row.edit} onClick={() => setEditingJob(true)} />}
 					{sent ? (
 						<Button
 							variant="default"
@@ -168,12 +175,13 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 					}}
 				/>
 			)}
+			{editingJob && <JobForm row={r} onClose={() => setEditingJob(false)} />}
 		</Box>
 	);
 }
 
-/** Shown until there is a profile and at least one lead. */
-function Onboarding() {
+/** Shown until there is a profile and at least one lead, or a job added by hand. */
+function Onboarding({ onAdd }: { onAdd: () => void }) {
 	const steps = profile ? ['/find-jobs'] : ['claude', '/setup', '/find-jobs'];
 	return (
 		<Paper p="lg">
@@ -187,6 +195,11 @@ function Onboarding() {
 				<Text size="sm" c="dimmed">
 					{t.onboarding.thenReload}
 				</Text>
+				<Group>
+					<Button variant="default" size="xs" leftSection={<Icon name="plus" />} onClick={onAdd}>
+						{t.addJob.orByHand}
+					</Button>
+				</Group>
 			</Stack>
 		</Paper>
 	);
@@ -216,15 +229,18 @@ function useStoredChoice<T extends string>(key: string, options: readonly T[], f
 const tabs = ['todo', 'applied'] as const;
 type Tab = (typeof tabs)[number];
 
-// leads.json is append-only, so a lead's position in it is its find order. Rows without a lead go last.
+// leads.json is append-only, so a lead's position in it is its find order. Jobs added by hand count as newer than
+// every lead, a lead that left leads.json as older.
 const leadOrder = new Map(leads.map((l, i) => [l.leadId, i]));
-const foundIndex = (r: JobRow) => (r.leadId ? (leadOrder.get(r.leadId) ?? -1) : -1);
+const foundIndex = (r: JobRow) => (r.leadId ? (leadOrder.get(r.leadId) ?? -1) : leads.length);
+const byFound = (a: JobRow, b: JobRow) =>
+	foundIndex(b) - foundIndex(a) || (!a.leadId && !b.leadId ? b.updatedAt.localeCompare(a.updatedAt) : 0);
 
 const sorts = ['fit', 'newest', 'company'] as const;
 type Sort = (typeof sorts)[number];
 const sorters: Record<Sort, (a: JobRow, b: JobRow) => number> = {
-	fit: (a, b) => (b.fit ?? 0) - (a.fit ?? 0) || foundIndex(b) - foundIndex(a),
-	newest: (a, b) => foundIndex(b) - foundIndex(a),
+	fit: (a, b) => (b.fit ?? 0) - (a.fit ?? 0) || byFound(a, b),
+	newest: byFound,
 	company: (a, b) => a.company.localeCompare(b.company, locale, { sensitivity: 'base' }),
 };
 
@@ -256,6 +272,7 @@ export default function App() {
 	const [screen, setScreen] = useScreen();
 	const [tab, setTab] = useStoredChoice<Tab>('jobhunt-local.tab', tabs, 'todo');
 	const [sort, setSort] = useStoredChoice<Sort>('jobhunt-local.sort', sorts, 'fit');
+	const [adding, setAdding] = useState(false);
 	const toSend = rows.filter((r) => !isSent(r)).toSorted(sorters[sort]);
 	const sent = rows.filter(isSent).toSorted((a, b) => b.appliedAt.localeCompare(a.appliedAt));
 
@@ -287,8 +304,8 @@ export default function App() {
 				/>
 				{screen === 'settings' ? (
 					<Settings onClose={() => setScreen('main')} />
-				) : !profile || (leads.length === 0 && rows.length === 0) ? (
-					<Onboarding />
+				) : rows.length === 0 && (!profile || leads.length === 0) ? (
+					<Onboarding onAdd={() => setAdding(true)} />
 				) : (
 					<>
 						{/* Tab switch and sort sit on the page above the card. */}
@@ -303,18 +320,29 @@ export default function App() {
 									{ value: 'applied', label: <TabLabel label={t.lists.sent} count={sent.length} /> },
 								]}
 							/>
-							{tab === 'todo' && (
-								<Select
+							<Group gap="xs" wrap="nowrap">
+								<Button
+									variant="default"
 									size="xs"
-									w={150}
-									aria-label={t.lists.sort.label}
-									leftSection={<Icon name="sort" />}
-									allowDeselect={false}
-									value={sort}
-									onChange={(v) => v && setSort(v as Sort)}
-									data={sorts.map((value) => ({ value, label: t.lists.sort[value] }))}
-								/>
-							)}
+									className="hover-accent"
+									leftSection={<Icon name="plus" />}
+									onClick={() => setAdding(true)}
+								>
+									{t.addJob.button}
+								</Button>
+								{tab === 'todo' && (
+									<Select
+										size="xs"
+										w={150}
+										aria-label={t.lists.sort.label}
+										leftSection={<Icon name="sort" />}
+										allowDeselect={false}
+										value={sort}
+										onChange={(v) => v && setSort(v as Sort)}
+										data={sorts.map((value) => ({ value, label: t.lists.sort[value] }))}
+									/>
+								)}
+							</Group>
 						</Group>
 						<ListSection
 							items={tab === 'todo' ? toSend : sent}
@@ -325,6 +353,7 @@ export default function App() {
 					</>
 				)}
 			</Stack>
+			{adding && <JobForm applied={screen === 'main' && tab === 'applied'} onClose={() => setAdding(false)} />}
 		</Container>
 	);
 }

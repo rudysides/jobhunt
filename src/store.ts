@@ -97,6 +97,8 @@ interface JobsState {
 	unmarkSent: (id: string) => void;
 	remove: (id: string) => void;
 	setNotes: (id: string, text: string) => void;
+	add: (row: JobRow) => void;
+	update: (id: string, patch: Partial<JobRow>) => void;
 	restore: (row: JobRow, index: number) => void;
 	replaceAll: (rows: JobRow[], dismissedLeads?: string[]) => void;
 	clearAll: () => void;
@@ -146,6 +148,9 @@ export const useJobs = create<JobsState>()(
 			markSent: (id) => set((s) => ({ rows: patchRow(s.rows, id, { status: 'applied', appliedAt: today() }) })),
 			unmarkSent: (id) => set((s) => ({ rows: patchRow(s.rows, id, { status: 'todo', appliedAt: '' }) })),
 			setNotes: (id, text) => set((s) => ({ rows: patchRow(s.rows, id, { myNotes: text }) })),
+			// A job the user added by hand (leadId null): on top, and leads.json never touches it.
+			add: (row) => set((s) => ({ rows: [row, ...s.rows] })),
+			update: (id, patch) => set((s) => ({ rows: patchRow(s.rows, id, patch) })),
 			remove: (id) =>
 				set((s) => {
 					const leadId = s.rows.find((r) => r.id === id)?.leadId;
