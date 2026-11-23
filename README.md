@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/rudysides/jobhunt/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/rudysides/jobhunt/ci.yml?branch=main&style=flat-square&logo=github&label=CI" alt="CI status" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square" alt="License: MIT" /></a>
-  <img src="https://img.shields.io/badge/local%20only-111111?style=flat-square" alt="Local only" />
+  <img src="https://img.shields.io/badge/local%20only-555555?style=flat-square" alt="Local only" />
 </p>
 
 <p align="center">
