@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased (1.0.0)
+## 1.0.0 (2026-11-23)
 
 First public release.
 
@@ -14,9 +14,11 @@ First public release.
 - Company logos: `/find-jobs` saves them to `profile/logos/` (PNG, JPEG, WebP or ICO, never SVG), initials otherwise.
 - Notes on applied jobs are edited in place.
 - `/find-jobs` knows job boards across Europe, the UK, the US and Brazil.
-- English and Czech UI, switchable in Settings.
+- UI in English, German, French, Spanish, Italian, Dutch, Portuguese, Polish and Czech, switchable in Settings.
 - The search profile in Settings shows every part, each row copies the `/setup <part>` command that changes just that
   part. `/setup` also takes a change in your own words.
+- IBM Plex Sans and Mono bundled with the app (no font CDN), orange accent by default, plain text tabs with
+  counts above the list.
 - Toasts: a check when a job is marked applied, an undo button when one is removed.
 - Security: dev server locked to `127.0.0.1` without CORS and without access to your CV, a build that writes nothing,
   one validator for leads, imports and links, prompt-injection rules in the skills. See

@@ -1,7 +1,7 @@
 # Security audit
 
 **Date:** 2026-11-22 · **Scope:** the working tree before the first commit · **Findings:** 10, nine fixed,
-JL-09 open (optional for 1.0, see [roadmap.md](roadmap.md))
+JL-09 open (optional, listed in [roadmap.md](roadmap.md))
 
 **Audited versions:** Vite 8.3.8, React 19.3.1, Mantine 9.8.1, zustand 5.1.0, TypeScript 7.0.2, Node 26.13, pnpm 12.18
 
