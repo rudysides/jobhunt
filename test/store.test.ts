@@ -35,9 +35,10 @@ describe('mergeStored (saved state + leads.json on load)', () => {
 		expect(s.rows).toEqual([]);
 	});
 
-	it('keeps applied rows when their lead disappears, drops unsent ones', () => {
-		const s = mergeStored({ rows: [row('gone'), row('sent', { status: 'applied' })], dismissedLeads: [] }, empty, []);
-		expect(s.rows.map((r) => r.leadId)).toEqual(['sent']);
+	it('keeps sent rows in any stage when their lead disappears, drops unsent ones', () => {
+		const sent = (['applied', 'interview', 'offer', 'rejected'] as const).map((status) => row(status, { status }));
+		const s = mergeStored({ rows: [row('gone'), ...sent], dismissedLeads: [] }, empty, []);
+		expect(s.rows.map((r) => r.leadId)).toEqual(['applied', 'interview', 'offer', 'rejected']);
 	});
 
 	it('keeps rows without a lead', () => {
@@ -63,9 +64,22 @@ describe('migrateStored', () => {
 		const s = migrateStored({ rows: [{ id: 'x', status: 'todo' }], dismissedLeads: [] }, 1);
 		expect(s.rows![0]!.myNotes).toBe('');
 	});
+	it('v2 rows get a stage history, applied ones stamped with their applied date', () => {
+		const s = migrateStored(
+			{
+				rows: [
+					{ id: 'x', status: 'todo', appliedAt: '' },
+					{ id: 'y', status: 'applied', appliedAt: '2026-11-02' },
+				],
+				dismissedLeads: [],
+			},
+			2
+		);
+		expect(s.rows!.map((r) => r.history)).toEqual([[], [{ status: 'applied', on: '2026-11-02' }]]);
+	});
 	it('leaves current data alone', () => {
 		const data = { rows: [row('a', { myNotes: 'n' })], dismissedLeads: [] };
-		expect(migrateStored(data, 2)).toEqual(data);
+		expect(migrateStored(data, 3)).toEqual(data);
 	});
 });
 
@@ -86,6 +100,31 @@ describe('normalizeRow (imported backups)', () => {
 		expect(r).toMatchObject({ company: 'Acme', email: '', jobUrl: '', status: 'applied', appliedAt: '', myNotes: '' });
 		expect(r).not.toHaveProperty('evil');
 		expect(r.fit).toBeUndefined();
+	});
+	it('accepts every stage and keeps only valid history steps', () => {
+		for (const status of ['interview', 'offer', 'rejected', 'withdrawn'])
+			expect(normalizeRow({ status })?.status).toBe(status);
+		const r = normalizeRow({
+			status: 'interview',
+			appliedAt: '2026-11-02',
+			history: [
+				{ status: 'applied', on: '2026-11-02' },
+				{ status: 'todo', on: '2026-11-03' },
+				{ status: 'interview', on: 'soon' },
+				{ status: 'interview', on: '2026-11-10', extra: 1 },
+				'junk',
+			],
+		})!;
+		expect(r.history).toEqual([
+			{ status: 'applied', on: '2026-11-02' },
+			{ status: 'interview', on: '2026-11-10' },
+		]);
+	});
+	it('older backups without history get one from the applied date', () => {
+		expect(normalizeRow({ status: 'applied', appliedAt: '2026-11-02' })!.history).toEqual([
+			{ status: 'applied', on: '2026-11-02' },
+		]);
+		expect(normalizeRow({ status: 'todo', history: [{ status: 'applied', on: '2026-11-02' }] })!.history).toEqual([]);
 	});
 	it('keeps valid data', () => {
 		const r = normalizeRow({
@@ -123,6 +162,21 @@ describe('store actions', () => {
 		expect(useJobs.getState().rows[0]!.appliedAt).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 		useJobs.getState().unmarkSent(id);
 		expect(useJobs.getState().rows[0]).toMatchObject({ status: 'todo', appliedAt: '', myNotes: 'interview Monday' });
+	});
+
+	it('moves through the stages with a dated trail, back to To apply clears it', () => {
+		const id = useJobs.getState().rows[0]!.id;
+		const { setStage } = useJobs.getState();
+		setStage(id, 'applied');
+		setStage(id, 'interview');
+		setStage(id, 'interview'); // same stage again adds nothing
+		setStage(id, 'rejected');
+		const r = useJobs.getState().rows[0]!;
+		expect(r.status).toBe('rejected');
+		expect(r.history.map((h) => h.status)).toEqual(['applied', 'interview', 'rejected']);
+		expect(r.appliedAt).toBe(r.history[0]!.on);
+		setStage(id, 'todo');
+		expect(useJobs.getState().rows[0]).toMatchObject({ status: 'todo', appliedAt: '', history: [] });
 	});
 
 	it('delete all dismisses every known lead', () => {

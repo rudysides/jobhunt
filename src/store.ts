@@ -4,7 +4,26 @@ import { today } from './ui/lib/date';
 import { leads, profile, type Lead } from './profile';
 import { cleanText, isEmail, isHttpUrl } from './validate.ts';
 
-export type Status = 'todo' | 'applied';
+/** Where an application stands. `todo` is not sent yet, the rest follow it after it was sent. */
+export const STATUSES = ['todo', 'applied', 'interview', 'offer', 'rejected', 'withdrawn'] as const;
+export type Status = (typeof STATUSES)[number];
+/** The stages a sent job can move between, in pipeline order. */
+export const STAGES = ['applied', 'interview', 'offer', 'rejected', 'withdrawn'] as const satisfies Status[];
+export type Stage = (typeof STAGES)[number];
+
+/** The list tabs: rejected and withdrawn share one "closed" list. */
+export const GROUPS = ['todo', 'applied', 'interview', 'offer', 'closed'] as const;
+export type Group = (typeof GROUPS)[number];
+export const groupOf = (s: Status): Group => (s === 'rejected' || s === 'withdrawn' ? 'closed' : s);
+
+/** One stamp in a job's trail: the stage it moved to and the day it did. */
+export interface StageStep {
+	status: Stage;
+	on: string; // YYYY-MM-DD
+}
+
+const isStatus = (v: unknown): v is Status => STATUSES.includes(v as Status);
+const isYmd = (v: unknown): v is string => typeof v === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(v);
 
 export interface JobRow extends Omit<Lead, 'leadId' | 'foundAt'> {
 	id: string;
@@ -13,6 +32,7 @@ export interface JobRow extends Omit<Lead, 'leadId' | 'foundAt'> {
 	appliedAt: string; // YYYY-MM-DD
 	updatedAt: string;
 	myNotes: string; // the user's own note, never touched by leads.json
+	history: StageStep[]; // every stage change after To apply, oldest first
 }
 
 export const isSent = (r: JobRow) => r.status !== 'todo';
@@ -34,6 +54,7 @@ function blankRow(partial: Partial<JobRow> = {}): JobRow {
 		status: 'todo',
 		appliedAt: '',
 		myNotes: '',
+		history: [],
 		updatedAt: new Date().toISOString(),
 		...partial,
 	};
@@ -60,7 +81,7 @@ const TEXT_FIELDS = [
 export function normalizeRow(v: unknown): JobRow | null {
 	if (!v || typeof v !== 'object' || Array.isArray(v)) return null;
 	const r = v as Record<string, unknown>;
-	if (r.status !== 'todo' && r.status !== 'applied') return null;
+	if (!isStatus(r.status)) return null;
 	const text = Object.fromEntries(
 		TEXT_FIELDS.map((k) => [k, cleanText(r[k], k === 'notes' || k === 'myNotes' ? 5000 : 300)])
 	);
@@ -68,6 +89,15 @@ export function normalizeRow(v: unknown): JobRow | null {
 	const jobUrl = cleanText(r.jobUrl, 2048);
 	const fit =
 		Number.isInteger(r.fit) && (r.fit as number) >= 1 && (r.fit as number) <= 5 ? (r.fit as number) : undefined;
+	const appliedAt = isYmd(r.appliedAt) ? r.appliedAt : '';
+	const history = Array.isArray(r.history)
+		? r.history
+				.filter(
+					(h): h is StageStep => !!h && typeof h === 'object' && STAGES.includes(h.status) && isYmd((h as StageStep).on)
+				)
+				.slice(-50)
+				.map(({ status, on }) => ({ status, on }))
+		: historyFallback(r.status, appliedAt);
 	return blankRow({
 		...text,
 		id: typeof r.id === 'string' && r.id ? cleanText(r.id, 100) : crypto.randomUUID(),
@@ -75,12 +105,17 @@ export function normalizeRow(v: unknown): JobRow | null {
 		email: isEmail(email) ? email : '',
 		jobUrl: isHttpUrl(jobUrl) ? jobUrl : '',
 		status: r.status,
-		appliedAt: typeof r.appliedAt === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.appliedAt) ? r.appliedAt : '',
+		appliedAt,
+		history: r.status === 'todo' ? [] : history,
 		...(typeof r.updatedAt === 'string' &&
 			!Number.isNaN(Date.parse(r.updatedAt)) && { updatedAt: cleanText(r.updatedAt, 40) }),
 		...(fit && { fit }),
 	});
 }
+
+/** Rows saved before stages existed: an applied row gets one stamp from its applied date. */
+const historyFallback = (status: Status, appliedAt: string): StageStep[] =>
+	status !== 'todo' && appliedAt ? [{ status: status as Stage, on: appliedAt }] : [];
 
 /** Leads that are not in the list yet and were not dismissed. */
 const newLeads = (rows: JobRow[], dismissed: string[], fileLeads: Lead[] = leads) => {
@@ -94,6 +129,7 @@ interface JobsState {
 	rows: JobRow[];
 	dismissedLeads: string[]; // removed leads, so they don't come back on reload
 	markSent: (id: string) => void;
+	setStage: (id: string, status: Status) => void;
 	unmarkSent: (id: string) => void;
 	remove: (id: string) => void;
 	setNotes: (id: string, text: string) => void;
@@ -106,11 +142,31 @@ interface JobsState {
 
 type Stored = Pick<JobsState, 'rows' | 'dismissedLeads'>;
 
-/** Upgrades saved state from older versions. v1 → v2: rows got the user's own note. */
+/**
+ * Upgrades saved state from older versions. v1 → v2: rows got the user's own note. v2 → v3: rows got a stage
+ * history, applied rows start it with their applied date.
+ */
 export function migrateStored(persisted: unknown, version: number): Partial<Stored> {
-	const s = (persisted ?? {}) as Partial<Stored>;
-	if (version < 2) return { ...s, rows: (s.rows ?? []).map((r) => ({ ...r, myNotes: r.myNotes ?? '' })) };
+	let s = (persisted ?? {}) as Partial<Stored>;
+	if (version < 2) s = { ...s, rows: (s.rows ?? []).map((r) => ({ ...r, myNotes: r.myNotes ?? '' })) };
+	if (version < 3)
+		s = {
+			...s,
+			rows: (s.rows ?? []).map((r) => ({ ...r, history: r.history ?? historyFallback(r.status, r.appliedAt) })),
+		};
 	return s;
+}
+
+/** The patch for moving a row to `status` today. Back to To apply clears the date and the trail. */
+function stagePatch(r: JobRow, status: Status): Partial<JobRow> {
+	if (status === 'todo') return { status, appliedAt: '', history: [] };
+	if (status === r.status) return {};
+	const on = today();
+	return {
+		status,
+		appliedAt: r.appliedAt || on,
+		history: [...r.history, { status, on }],
+	};
 }
 
 /**
@@ -142,11 +198,16 @@ const patchRow = (rows: JobRow[], id: string, patch: Partial<JobRow>) =>
 
 export const useJobs = create<JobsState>()(
 	persist(
-		(set) => ({
+		(set, get) => ({
 			rows: newLeads([], []),
 			dismissedLeads: [],
-			markSent: (id) => set((s) => ({ rows: patchRow(s.rows, id, { status: 'applied', appliedAt: today() }) })),
-			unmarkSent: (id) => set((s) => ({ rows: patchRow(s.rows, id, { status: 'todo', appliedAt: '' }) })),
+			setStage: (id, status) =>
+				set((s) => {
+					const r = s.rows.find((x) => x.id === id);
+					return r && r.status !== status ? { rows: patchRow(s.rows, id, stagePatch(r, status)) } : s;
+				}),
+			markSent: (id) => get().setStage(id, 'applied'),
+			unmarkSent: (id) => get().setStage(id, 'todo'),
 			setNotes: (id, text) => set((s) => ({ rows: patchRow(s.rows, id, { myNotes: text }) })),
 			// A job the user added by hand (leadId null): on top, and leads.json never touches it.
 			add: (row) => set((s) => ({ rows: [row, ...s.rows] })),
@@ -177,7 +238,7 @@ export const useJobs = create<JobsState>()(
 		{
 			// Changing the key or the port (5180) means an empty app; bump `version` and migrate instead.
 			name: 'jobhunt-local.jobs.v1',
-			version: 2,
+			version: 3,
 			migrate: (persisted, version) => migrateStored(persisted, version) as JobsState,
 			merge: (persisted, current) => ({ ...current, ...mergeStored(persisted as Stored, current) }),
 		}

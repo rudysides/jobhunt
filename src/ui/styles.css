@@ -5,9 +5,13 @@
 	--app-page: #f8f8f6;
 	/* Mantine's gray-6 is only 3.3:1 on white. This one is 6:1, so secondary text and notes stay readable. */
 	--mantine-color-dimmed: #5c636b;
+	--pipe-early: var(--mantine-color-gray-4);
+	--pipe-mid: var(--mantine-color-gray-7);
 }
 :root[data-mantine-color-scheme='dark'] {
 	--app-page: var(--mantine-color-dark-9);
+	--pipe-early: var(--mantine-color-dark-3);
+	--pipe-mid: var(--mantine-color-dark-1);
 }
 body {
 	background: var(--app-page);
@@ -130,6 +134,7 @@ body {
 	border-bottom: 2px solid transparent;
 	color: var(--mantine-color-dimmed);
 	font-weight: 500;
+	white-space: nowrap;
 	transition:
 		color 120ms,
 		border-color 120ms;
@@ -156,4 +161,40 @@ body {
 }
 .mantine-Notification-root:not(.toast-danger)::before {
 	display: none;
+}
+
+/* Pipeline: the stage tabs take the free width next to the list buttons, a row of their own when there isn't enough,
+   and scroll sideways on a phone. The bar runs under the whole row and splits the sent jobs by stage. */
+.pipeline {
+	flex: 1 1 320px;
+}
+.pipeline-tabs {
+	overflow-x: auto;
+	scrollbar-width: none;
+}
+.pipeline-bar {
+	display: flex;
+	gap: 2px;
+	height: 6px;
+}
+/* Solid steps of the gray ramp for the open stages, the accent for offers, an outline for closed ones. */
+.pipeline-seg {
+	flex-basis: 0;
+	min-width: 6px;
+	border-radius: 3px;
+	transition:
+		flex-grow 200ms ease-out,
+		background-color 120ms;
+}
+.pipeline-seg[data-tone='early'] {
+	background: var(--pipe-early);
+}
+.pipeline-seg[data-tone='mid'] {
+	background: var(--pipe-mid);
+}
+.pipeline-seg[data-tone='goal'] {
+	background: var(--mantine-primary-color-filled);
+}
+.pipeline-seg[data-tone='closed'] {
+	box-shadow: inset 0 0 0 1px var(--pipe-early);
 }

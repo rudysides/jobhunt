@@ -2,8 +2,12 @@
 
 ## Unreleased
 
-- Two lists, **To apply** and **Applied**, fed by `/find-jobs` from your CV. Sort by fit, newest or company; undo on
-  remove; your own notes on applied jobs.
+- **To apply** list fed by `/find-jobs` from your CV. Sort by fit, newest or company; undo on remove.
+- Application stages: a sent job moves through **Applied**, **Interview**, **Offer** and **Closed** (rejected or
+  withdrawn) from its stage button, or back to To apply. Each stage has its own tab with a count, and a thin bar
+  above the list shows how your applications split across the stages.
+- A date trail on every sent job (`applied 12 Nov → interview 20 Nov`) and your own notes on it.
+  Saved data and older backups upgrade on their own.
 - `/setup` builds the search profile from your CV; `/find-jobs` appends leads and skips likely scams.
 - Backup and import with checks and a confirm step; backups include removed jobs.
 - `pnpm demo` with fictional data, `pnpm start` opens the app.

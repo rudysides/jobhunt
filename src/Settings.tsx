@@ -259,7 +259,7 @@ export function Settings({ onClose }: { onClose: () => void }) {
 						variant="default"
 						size="xs"
 						leftSection={<Icon name="download" />}
-						onClick={() => downloadJson({ version: 2, exportedAt: new Date().toISOString(), rows, dismissedLeads })}
+						onClick={() => downloadJson({ version: 3, exportedAt: new Date().toISOString(), rows, dismissedLeads })}
 					>
 						{tp.backup}
 					</Button>

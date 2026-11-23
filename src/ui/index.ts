@@ -4,6 +4,7 @@ export { Providers } from './Providers';
 export { accents, useAccent, type Accent } from './accent';
 export { AppHeader } from './AppHeader';
 export { ListSection } from './ListSection';
+export { PipelineBar, PipelineTabs, type PipelineItem } from './PipelineTabs';
 export { CompanyAvatar, DeleteButton, EditButton, FitTicks, LinkButton, MailButton, NoteButton } from './fields';
 export { today, shortDate } from './lib/date';
 export { downloadJson, readBackupFile } from './lib/backup';

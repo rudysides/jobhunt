@@ -2,7 +2,6 @@
 
 Ideas for after 1.0, not promises:
 
-- Interview, offer and rejected stages next to **To apply** and **Applied**
 - CSV export
 - More languages
 - A desktop app that doesn't need Node

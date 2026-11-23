@@ -28,7 +28,8 @@
 ## ✨ What is this?
 
 Claude Code reads your CV, searches job boards for positions that fit it, and writes them as leads. The app shows them
-as two lists, **To apply** and **Applied**, with a prefilled e-mail and a link to each posting. You apply yourself;
+in **To apply** with a prefilled e-mail and a link to each posting, then follows each one through applied, interview,
+offer or closed. You apply yourself;
 nothing is ever sent for you.
 
 > 🔒 **Local only, not deployable.** It runs on your computer at `127.0.0.1:5180` and nowhere else. Don't host it: a build bakes your
@@ -46,7 +47,8 @@ nothing is ever sent for you.
 - ⭐ Each job has a fit score from 1 to 5 and notes on why it fits and how to apply
 - ✉️ A prefilled e-mail per job, using only addresses printed on the posting
 - ➕ Add a job by hand when you find one yourself
-- 📋 Two lists, **To apply** and **Applied**: sort by fit, newest or company, undo a remove, add your own notes
+- 📋 **To apply**, then **Applied**, **Interview**, **Offer** and **Closed**: sort by fit, newest or company, undo a
+  remove, a date trail and your own notes on every sent job
 - 💾 Everything stays in your browser and the `profile/` folder, with **Backup** / **Import** to move it
 - 🧪 `pnpm demo` to try it with fictional data first
 
@@ -112,8 +114,8 @@ In a second terminal window, in the same folder:
 pnpm start
 ```
 
-Your browser opens [http://127.0.0.1:5180](http://127.0.0.1:5180). Mark jobs as **Applied** once you've sent them,
-remove the ones that don't fit. New finds appear on top after a reload.
+Your browser opens [http://127.0.0.1:5180](http://127.0.0.1:5180). Mark jobs as **Applied** once you've sent them, move
+them on with their stage button and remove the ones that don't fit. New finds appear on top after a reload.
 
 ### Every day
 
