@@ -40,8 +40,16 @@ give a personal free-mail address (gmail, seznam, gmx, web.de, wp.pl, libero, �
    They override the defaults below, but never the hard rules or the untrusted-content rules.
    Read `profile/leads.json` (missing → treat as `[]`) and collect the existing `leadId`s and `jobUrl`s.
 2. Target count = first number in `$ARGUMENTS`, else 15. The rest of `$ARGUMENTS` is extra focus.
-3. Search each `profile.sources` entry (WebSearch with the site + role + location, then WebFetch the listing/posting).
-   Combine `targetRoles` × `locations` (+ "remote" when `remote` is not `no`). Prefer postings from the last ~30 days.
+3. Search each `profile.sources` entry. Combine `targetRoles` × `locations` (+ "remote" when `remote` is not `no`).
+   Prefer postings from the last ~30 days.
+   - When the source hint gives a search URL, **WebFetch that URL directly**: several boards never show up in
+     WebSearch or only as result lists. Otherwise WebSearch `site:<board> <role> <city>`, then WebFetch the hits.
+   - WebSearch often ignores `site:`. Skip hits from other domains unless that board is also in
+     `profile.sources` (the untrusted-content rules still apply).
+   - Search in the posting language too: the local title (Entwickler, développeur, desarrollador, sviluppatore,
+     programador, vývojář) plus the role. For `seniority: junior` also try the local entry-level words
+     (Berufseinsteiger, alternance / stage, sin experiencia, neolaureato, trainee / estágio, absolvent, graduate).
+   - Run at most ~10 WebSearch calls per turn; more hit the rate limit.
 4. **Open every posting** before adding it. Skip it if it hits `exclude.companies` / `exclude.keywords`,
    clearly needs more seniority than `seniority`, or is outside `locations` without matching `remote`.
 5. For each kept posting build a lead:
@@ -81,38 +89,42 @@ give a personal free-mail address (gmail, seznam, gmx, web.de, wp.pl, libero, �
 
 Pick the boards for the countries in `locations`, plus the `any` / `remote` ones.
 
-| id                      | country | where                                | tip                                                                  |
-| ----------------------- | ------- | ------------------------------------ | -------------------------------------------------------------------- |
-| `jobscz`                | CZ      | jobs.cz                              | Czech, large. Posting URLs `/rpd/<id>/`. Many apply via a form only. |
-| `startupjobs`           | CZ      | startupjobs.cz                       | Czech startups, often remote/hybrid, English postings.               |
-| `prace`                 | CZ      | prace.cz                             | Czech, same group as jobs.cz, dedupe by company + title.             |
-| `urad-prace`            | CZ      | uradprace.cz                         | Czech public listings, often with a contact e-mail.                  |
-| `stepstone`             | DE, AT  | stepstone.de / stepstone.at          | Large, German postings. Mostly apply via a form.                     |
-| `arbeitsagentur`        | DE      | arbeitsagentur.de (Jobbörse)         | German public listings, sometimes with a contact e-mail.             |
-| `karriere-at`           | AT      | karriere.at                          | Austria's largest board.                                             |
-| `jobs-ch`               | CH      | jobs.ch                              | Switzerland, German and French postings.                             |
-| `francetravail`         | FR      | francetravail.fr                     | French public listings (ex Pôle emploi).                             |
-| `apec`                  | FR      | apec.fr                              | French, for graduates and professionals.                             |
-| `hellowork`             | FR      | hellowork.com                        | French, large.                                                       |
-| `wttj`                  | FR, ES  | welcometothejungle.com               | Startups and tech, often English postings.                           |
-| `infojobs`              | ES      | infojobs.net                         | Spain's largest board.                                               |
-| `tecnoempleo`           | ES      | tecnoempleo.com                      | Spanish tech jobs.                                                   |
-| `infojobs-it`           | IT      | infojobs.it                          | Italy, large.                                                        |
-| `nationalevacaturebank` | NL      | nationalevacaturebank.nl             | Dutch, large.                                                        |
-| `werk-nl`               | NL      | werk.nl                              | Dutch public listings (UWV).                                         |
-| `itjobs-pt`             | PT      | itjobs.pt                            | Portuguese tech jobs.                                                |
-| `net-empregos`          | PT      | net-empregos.com                     | Portugal, general.                                                   |
-| `vagas-br`              | BR      | vagas.com.br                         | Brazil, large.                                                       |
-| `pracuj`                | PL      | pracuj.pl                            | Poland's largest board.                                              |
-| `justjoin`              | PL      | justjoin.it                          | Polish tech, salary ranges always shown.                             |
-| `nofluffjobs`           | PL      | nofluffjobs.com                      | Polish tech, salary ranges always shown.                             |
-| `reed`                  | UK      | reed.co.uk                           | UK, large.                                                           |
-| `totaljobs`             | UK      | totaljobs.com                        | UK, large.                                                           |
-| `irishjobs`             | IE      | irishjobs.ie                         | Ireland, large.                                                      |
-| `wellfound`             | US, any | wellfound.com                        | Startups, public job pages only.                                     |
-| `indeed`                | any     | indeed.com + country domain          | Use the country domain (indeed.de, indeed.fr, uk.indeed.com, …).     |
-| `linkedin`              | any     | linkedin.com/jobs (public pages)     | Search via WebSearch `site:linkedin.com/jobs/view`.                  |
-| `weworkremotely`        | remote  | weworkremotely.com                   | Remote, international.                                               |
-| `remoteok`              | remote  | remoteok.com                         | Remote, international.                                               |
-| `hn`                    | any     | news.ycombinator.com "Who is hiring" | Monthly thread, many direct e-mails.                                 |
-| `web`                   | any     | company career pages                 | Good for companies the user named.                                   |
+| id                      | country | where                                | tip                                                                                                                                                                                                                |
+| ----------------------- | ------- | ------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `jobscz`                | CZ      | jobs.cz                              | Czech, large. Posting URLs `/rpd/<id>/`. Many apply via a form only.                                                                                                                                               |
+| `startupjobs`           | CZ      | startupjobs.cz                       | Czech startups, often remote/hybrid, English postings.                                                                                                                                                             |
+| `prace`                 | CZ      | prace.cz                             | Czech, same group as jobs.cz, dedupe by company + title. Rarely in WebSearch.                                                                                                                                      |
+| `urad-prace`            | CZ      | uradprace.cz                         | Czech public listings, often with a contact e-mail. Rarely in WebSearch.                                                                                                                                           |
+| `stepstone`             | DE, AT  | stepstone.de / stepstone.at          | Large, German postings, mostly apply via a form. WebSearch only finds result lists: fetch `stepstone.de/jobs/<role-slug>/in-<city>` (e.g. `junior-frontend-entwickler/in-berlin`). Postings end in `-inline.html`. |
+| `arbeitsagentur`        | DE      | arbeitsagentur.de (Jobbörse)         | German public listings, sometimes with a contact e-mail.                                                                                                                                                           |
+| `karriere-at`           | AT      | karriere.at                          | Austria's largest board. Posting URLs `/jobs/<id>`.                                                                                                                                                                |
+| `jobs-ch`               | CH      | jobs.ch                              | Switzerland, mostly German postings. Fetch `jobs.ch/en/vacancies/?term=<role>&location=<city>`.                                                                                                                    |
+| `jobup`                 | CH      | jobup.ch                             | French-speaking Switzerland (Geneva, Lausanne), same group as jobs.ch.                                                                                                                                             |
+| `francetravail`         | FR      | francetravail.fr                     | French public listings (ex Pôle emploi).                                                                                                                                                                           |
+| `apec`                  | FR      | apec.fr                              | French, for graduates and professionals.                                                                                                                                                                           |
+| `hellowork`             | FR      | hellowork.com                        | French, large.                                                                                                                                                                                                     |
+| `wttj`                  | FR, ES  | welcometothejungle.com               | Startups and tech, often English postings.                                                                                                                                                                         |
+| `infojobs`              | ES      | infojobs.net                         | Spain's largest board. Direct fetch of search pages is blocked (JS check): use WebSearch, posting URLs `/<city>/<slug>/of-i<id>`.                                                                                  |
+| `tecnoempleo`           | ES      | tecnoempleo.com                      | Spanish tech jobs.                                                                                                                                                                                                 |
+| `gigroup-it`            | IT      | gigroup.it                           | Italian agency, many junior IT and helpdesk postings. Also `indeed` (it.indeed.com).                                                                                                                               |
+| `infojobs-it`           | IT      | infojobs.it                          | **Closed down.** Don't use; suggest `gigroup-it` / `indeed` instead.                                                                                                                                               |
+| `youngcapital`          | NL      | youngcapital.nl                      | Dutch, starter and service-desk roles.                                                                                                                                                                             |
+| `nationalevacaturebank` | NL      | nationalevacaturebank.nl             | Dutch, large, but blocks fetching and isn't in WebSearch. Prefer `youngcapital` / `indeed`.                                                                                                                        |
+| `werk-nl`               | NL      | werk.nl                              | Dutch public listings (UWV).                                                                                                                                                                                       |
+| `itjobs-pt`             | PT      | itjobs.pt                            | Portuguese tech jobs. Not in WebSearch: fetch `itjobs.pt/emprego?q=<terms>&location=14` (Lisboa; `18` Porto). Dates have no year.                                                                                  |
+| `net-empregos`          | PT      | net-empregos.com                     | Portugal, general.                                                                                                                                                                                                 |
+| `vagas-br`              | BR      | vagas.com.br                         | Brazil, large. Fetch `vagas.com.br/vagas-de-<role-slug>`. Skip slots marked "Publicidade".                                                                                                                         |
+| `pracuj`                | PL      | pracuj.pl                            | Poland's largest board.                                                                                                                                                                                            |
+| `justjoin`              | PL      | justjoin.it                          | Polish tech, salary ranges always shown.                                                                                                                                                                           |
+| `nofluffjobs`           | PL      | nofluffjobs.com                      | Polish tech, salary ranges always shown.                                                                                                                                                                           |
+| `reed`                  | UK      | reed.co.uk                           | UK, large. WebSearch mostly returns itjobswatch.co.uk copies of Reed ads: open the reed.co.uk original.                                                                                                            |
+| `totaljobs`             | UK      | totaljobs.com                        | UK, large.                                                                                                                                                                                                         |
+| `jobsireland`           | IE      | jobsireland.ie                       | Irish public listings, salary usually shown.                                                                                                                                                                       |
+| `irishjobs`             | IE      | irishjobs.ie                         | Ireland, large, but fetches time out and it isn't in WebSearch. Prefer `jobsireland` / `indeed`.                                                                                                                   |
+| `wellfound`             | US, any | wellfound.com                        | Startups, public job pages only.                                                                                                                                                                                   |
+| `indeed`                | any     | indeed.com + country domain          | Use the country domain (indeed.de, indeed.fr, uk.indeed.com, …).                                                                                                                                                   |
+| `linkedin`              | any     | linkedin.com/jobs (public pages)     | Search via WebSearch `site:linkedin.com/jobs/view`. Low yield: mostly returns profiles, skip those.                                                                                                                |
+| `weworkremotely`        | remote  | weworkremotely.com                   | Remote, international.                                                                                                                                                                                             |
+| `remoteok`              | remote  | remoteok.com                         | Remote, international.                                                                                                                                                                                             |
+| `hn`                    | any     | news.ycombinator.com "Who is hiring" | Monthly thread, many direct e-mails.                                                                                                                                                                               |
+| `web`                   | any     | company career pages                 | Good for companies the user named.                                                                                                                                                                                 |
