@@ -35,11 +35,8 @@ nothing is ever sent for you.
 > profile and leads into the bundle. See [Why it isn't deployable](#-why-it-isnt-deployable).
 
 <p align="center">
-  <picture>
-    <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png" />
-    <source media="(prefers-color-scheme: light)" srcset="docs/screenshot-light.png" />
-    <img src="docs/screenshot-light.png" alt="The app with fictional demo data: a list of junior frontend jobs with fit scores" width="720" />
-  </picture>
+  <img src="docs/screenshot-light.png#gh-light-mode-only" alt="The app with fictional demo data: a list of junior frontend jobs with fit scores" width="720" />
+  <img src="docs/screenshot-dark.png#gh-dark-mode-only" alt="The app with fictional demo data: a list of junior frontend jobs with fit scores" width="720" />
 </p>
 
 ## 🚀 Included
