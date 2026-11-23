@@ -2,10 +2,26 @@
   <img src="public/favicon.svg" alt="Jobhunt Local app icon" width="180" />
 </p>
 
-<h1 align="center">Jobhunt Local</h1>
+<h1 align="center">Jobhunt</h1>
 
 <p align="center">
   A job hunt tracker that runs only on your machine. Claude Code finds leads from your CV, you apply.
+</p>
+
+<p align="center">
+  <a href="https://github.com/rudysides/jobhunt/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/rudysides/jobhunt/ci.yml?branch=main&style=flat-square&logo=github&label=CI" alt="CI status" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square" alt="License: MIT" /></a>
+  <img src="https://img.shields.io/badge/local%20only-127.0.0.1-111111?style=flat-square" alt="Local only: 127.0.0.1" />
+  <img src="https://img.shields.io/badge/backend-none-22c55e?style=flat-square" alt="No backend" />
+</p>
+
+<p align="center">
+  <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react&logoColor=20232a" alt="React 19" /></a>
+  <a href="https://mantine.dev"><img src="https://img.shields.io/badge/Mantine-9-339af0?style=flat-square&logo=mantine&logoColor=white" alt="Mantine 9" /></a>
+  <a href="https://vite.dev"><img src="https://img.shields.io/badge/Vite-8-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite 8" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-7-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript 7" /></a>
+  <a href="https://pnpm.io"><img src="https://img.shields.io/badge/pnpm-f69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" /></a>
+  <a href="https://claude.com/claude-code"><img src="https://img.shields.io/badge/Claude%20Code-d97757?style=flat-square&logo=claude&logoColor=white" alt="Claude Code" /></a>
 </p>
 
 <br />
