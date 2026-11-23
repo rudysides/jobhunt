@@ -11,7 +11,7 @@
 <p align="center">
   <a href="https://github.com/rudysides/jobhunt/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/rudysides/jobhunt/ci.yml?branch=main&style=flat-square&logo=github&label=CI" alt="CI status" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-22c55e?style=flat-square" alt="License: MIT" /></a>
-  <img src="https://img.shields.io/badge/local%20only-555555?style=flat-square" alt="Local only" />
+  <img src="https://img.shields.io/badge/local%20only-555555?style=flat-square&logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiPjxyZWN0IHg9IjUiIHk9IjExIiB3aWR0aD0iMTQiIGhlaWdodD0iMTAiIHJ4PSIyIi8%2BPHBhdGggZD0iTTggMTFWN2E0IDQgMCAwIDEgOCAwdjQiLz48L3N2Zz4%3D" alt="Local only" />
 </p>
 
 <p align="center">
