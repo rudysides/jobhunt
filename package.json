@@ -1,8 +1,8 @@
 {
-	"name": "jobhunt-local",
+	"name": "jobhunt",
 	"private": true,
 	"version": "0.0.0",
-	"description": "Local-first job hunt tracker that runs only on your machine (not deployable). Claude Code finds leads from your CV, you apply.",
+	"description": "Local-first job hunt tracker: Claude Code finds jobs, you apply.",
 	"license": "MIT",
 	"type": "module",
 	"packageManager": "pnpm@12.18.0",

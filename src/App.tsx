@@ -1,5 +1,5 @@
 /*
- * Jobhunt Local: two lists, "To apply" and "Applied".
+ * Jobhunt: two lists, "To apply" and "Applied".
  *
  * Leads come from profile/leads.json (written by the /find-jobs agent). New ones are added on top on reload,
  * removed ones never come back. Mail opens a prefilled e-mail (attach your CV manually), link opens the posting.

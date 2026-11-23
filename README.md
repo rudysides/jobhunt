@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="public/favicon.svg" alt="Jobhunt Local app icon" width="180" />
+  <img src="public/favicon.svg" alt="Jobhunt app icon" width="180" />
 </p>
 
 <h1 align="center">Jobhunt</h1>
 
 <p align="center">
-  A job hunt tracker that runs only on your machine. Claude Code finds leads from your CV, you apply.
+  Local-first job hunt tracker: Claude Code finds jobs, you apply.
 </p>
 
 <p align="center">

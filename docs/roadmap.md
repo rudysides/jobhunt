@@ -1,6 +1,6 @@
 # Roadmap
 
-Jobhunt Local is a job hunt tracker that runs only on your computer. Claude Code finds postings that fit your CV, the
+Jobhunt is a job hunt tracker that runs only on your computer. Claude Code finds postings that fit your CV, the
 app shows them as two lists, and you apply yourself.
 
 **1.0 means:** safe by default (nothing leaves your machine without your approval), usable by someone who isn't a

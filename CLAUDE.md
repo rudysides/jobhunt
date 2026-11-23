@@ -1,6 +1,6 @@
 # CLAUDE.md
 
-Jobhunt Local: a local-first job hunt tracker. Vite + React + Mantine, no backend. Claude Code finds leads from the
+Jobhunt: a local-first job hunt tracker. Vite + React + Mantine, no backend. Claude Code finds leads from the
 user's CV (`/setup`, `/find-jobs` in `.claude/skills/`); the app is just two lists over `localStorage`.
 
 ## Data

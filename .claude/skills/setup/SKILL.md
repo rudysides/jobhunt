@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Onboarding for Jobhunt Local. Reads the user's CV, asks for what is missing and writes profile/profile.json + profile/cv.md. Use when the user runs /setup or wants to change their job search profile.
+description: Onboarding for Jobhunt. Reads the user's CV, asks for what is missing and writes profile/profile.json + profile/cv.md. Use when the user runs /setup or wants to change their job search profile.
 argument-hint: '[path to CV | roles | location | sources | filters | email | what to change]'
 ---
 

@@ -1,6 +1,6 @@
 # Security
 
-Jobhunt Local runs only on your computer and handles your CV, so leaks of personal data are what matters most.
+Jobhunt runs only on your computer and handles your CV, so leaks of personal data are what matters most.
 
 ## Reporting a vulnerability
 
