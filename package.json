@@ -1,7 +1,7 @@
 {
 	"name": "jobhunt",
 	"private": true,
-	"version": "1.0.0",
+	"version": "0.9.0",
 	"description": "Local-first job hunt tracker: Claude Code finds jobs, you apply.",
 	"license": "MIT",
 	"type": "module",

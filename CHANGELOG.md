@@ -1,8 +1,6 @@
 # Changelog
 
-## 1.0.0 (2026-11-23)
-
-First public release.
+## Unreleased
 
 - Two lists, **To apply** and **Applied**, fed by `/find-jobs` from your CV. Sort by fit, newest or company; undo on
   remove; your own notes on applied jobs.
