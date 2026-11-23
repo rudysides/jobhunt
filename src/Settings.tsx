@@ -1,5 +1,5 @@
 /*
- * Settings: profile summary, appearance (theme + accent), language and data (backup, import, delete all).
+ * Settings: language, profile summary, appearance (theme + accent) and data (backup, import, delete all).
  * The profile itself is edited with /setup in Claude Code; the app only shows it, and each row copies the
  * `/setup <part>` command that changes just that part.
  * Mantine remembers the color scheme itself (localStorage), the accent lives in ui/accent.tsx.
@@ -170,6 +170,19 @@ export function Settings({ onClose }: { onClose: () => void }) {
 				</Button>
 			</Group>
 
+			<Section title={tp.language}>
+				<Select
+					aria-label={tp.language}
+					data={languages.map((l) => ({ value: l.code, label: l.label }))}
+					value={locale}
+					onChange={(v) => v && v !== locale && setLocale(v)}
+					allowDeselect={false}
+					checkIconPosition="right"
+					w={220}
+					size="xs"
+				/>
+			</Section>
+
 			<Section
 				title={tp.profile}
 				hint={
@@ -238,19 +251,6 @@ export function Settings({ onClose }: { onClose: () => void }) {
 						))}
 					</Group>
 				</Stack>
-			</Section>
-
-			<Section title={tp.language}>
-				<Select
-					aria-label={tp.language}
-					data={languages.map((l) => ({ value: l.code, label: l.label }))}
-					value={locale}
-					onChange={(v) => v && v !== locale && setLocale(v)}
-					allowDeselect={false}
-					checkIconPosition="right"
-					w={220}
-					size="xs"
-				/>
 			</Section>
 
 			<Section title={tp.data} hint={tp.dataHint}>

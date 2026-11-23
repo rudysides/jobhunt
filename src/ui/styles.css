@@ -86,6 +86,17 @@ body {
 	}
 }
 
+/* A saved note is a textarea that shows the accent border on hover and while focused, plus its fill while focused. */
+.note-field:not(:focus) {
+	border-color: transparent;
+	background-color: transparent;
+}
+@media (hover: hover) {
+	.note-field:not(:focus):hover {
+		border-color: var(--mantine-primary-color-filled);
+	}
+}
+
 /* Row actions stay outlined: on hover the icon and border take the accent, green for saving, red for removing. */
 @media (hover: hover) {
 	.hover-accent:hover {

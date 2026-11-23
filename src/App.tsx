@@ -20,7 +20,6 @@ import {
 	Text,
 	Textarea,
 	Title,
-	UnstyledButton,
 } from '@mantine/core';
 import {
 	AppHeader,
@@ -49,8 +48,11 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 	const cancelled = useRef(false);
 	const myNotes = r.myNotes ?? '';
 	const name = r.company || t.row.untitled;
-	const saveNote = (text: string) => {
-		if (!cancelled.current && text.trim() !== myNotes) setNotes(r.id, text.trim());
+	// The field stays mounted after blur, so its text is reset to what was actually saved.
+	const saveNote = (el: HTMLTextAreaElement) => {
+		const text = cancelled.current ? myNotes : el.value.trim();
+		if (text !== myNotes) setNotes(r.id, text);
+		el.value = text;
 		cancelled.current = false;
 		setEditing(false);
 	};
@@ -86,7 +88,7 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 						</Box>
 					</Group>
 					{!sent && r.notes && (
-						<Text size="xs" c="dimmed" lineClamp={2} mt={8}>
+						<Text size="sm" c="dimmed" lineClamp={2} mt={8} style={{ overflowWrap: 'anywhere' }}>
 							{r.notes}
 						</Text>
 					)}
@@ -98,7 +100,9 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 							active={myNotes !== ''}
 							editing={editing}
 							label={editing ? t.row.note.save : myNotes ? t.row.note.edit : t.row.note.add}
-							onClick={() => (editing ? noteRef.current?.blur() : setEditing(true))}
+							onClick={() =>
+								editing ? noteRef.current?.blur() : myNotes ? noteRef.current?.focus() : setEditing(true)
+							}
 						/>
 					)}
 					{isHttpUrl(r.jobUrl) && <LinkButton href={r.jobUrl} label={t.link.open} />}
@@ -139,19 +143,22 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 					)}
 				</Group>
 			</Flex>
-			{/* Own notes only for applied rows, full width under the row so the buttons never move. */}
-			{sent && editing ? (
+			{/* Own notes only for applied rows, full width under the row so the buttons never move.
+			    A saved note is the same textarea as the editor, borderless until focused, so nothing jumps. */}
+			{sent && (editing || myNotes) && (
 				<Textarea
 					mt={8}
-					size="xs"
+					size="sm"
 					autosize
-					minRows={2}
-					autoFocus
+					minRows={1}
+					autoFocus={!myNotes}
 					ref={noteRef}
-					aria-label={t.row.note.edit}
+					classNames={{ input: 'note-field' }}
+					aria-label={myNotes ? t.row.note.edit : t.row.note.add}
 					placeholder={t.row.note.placeholder}
 					defaultValue={myNotes}
-					onBlur={(e) => saveNote(e.currentTarget.value)}
+					onFocus={() => setEditing(true)}
+					onBlur={(e) => saveNote(e.currentTarget)}
 					onKeyDown={(e) => {
 						if (e.key === 'Escape') {
 							cancelled.current = true;
@@ -160,15 +167,6 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 						if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) e.currentTarget.blur();
 					}}
 				/>
-			) : (
-				sent &&
-				myNotes && (
-					<UnstyledButton display="block" mt={8} onClick={() => setEditing(true)} aria-label={t.row.note.edit}>
-						<Text size="xs" lineClamp={2} style={{ whiteSpace: 'pre-line' }}>
-							{myNotes}
-						</Text>
-					</UnstyledButton>
-				)
 			)}
 		</Box>
 	);

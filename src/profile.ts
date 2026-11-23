@@ -42,3 +42,28 @@ const pick = (name: string) => (isDemo ? example[`../profile/example/${name}`] :
 
 export const profile = (pick('profile.json') as Profile | undefined) ?? null;
 export const leads = (pick('leads.json') as Lead[] | undefined) ?? [];
+
+// Company logos, downloaded once by /find-jobs into profile/logos/<companySlug>.<ext>. Never fetched at runtime.
+const logoFiles = isDemo
+	? {}
+	: import.meta.glob<string>('../profile/logos/*.{png,jpg,webp,svg,ico}', {
+			eager: true,
+			query: '?url',
+			import: 'default',
+		});
+export const logos: Record<string, string> = Object.fromEntries(
+	Object.entries(logoFiles).map(([path, url]) => [path.replace(/^.*\/|\.[^.]+$/g, ''), url])
+);
+
+/** Company name without its legal form (s.r.o., a.s., GmbH, …). */
+export const companyBase = (name: string) =>
+	name.trim().replace(/[\s,]+(a\.\s?s\.|s\.\s?r\.\s?o\.|s\.p\.|spol\..*|gmbh|ltd\.?|inc\.?|llc)$/i, '');
+
+/** File name for a company's logo: "Seznam.cz, a.s." → "seznam-cz". */
+export const companySlug = (name: string) =>
+	companyBase(name)
+		.normalize('NFD')
+		.replace(/[\u0300-\u036f]/g, '')
+		.toLowerCase()
+		.replace(/[^a-z0-9]+/g, '-')
+		.replace(/^-|-$/g, '');

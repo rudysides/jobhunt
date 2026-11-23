@@ -1,4 +1,5 @@
 import { ActionIcon, Avatar, Box, Text, Tooltip } from '@mantine/core';
+import { companyBase, companySlug, logos } from '../profile';
 import { Icon } from './icons';
 
 // Avatar colors, hashed from the company name. All dark enough for white initials (at least 4.5:1 contrast)
@@ -21,9 +22,13 @@ function avatarColor(name: string) {
 	return avatarColors[Math.abs(hash) % avatarColors.length];
 }
 
-/** Company initials avatar, the color stays the same for the same company. */
+/**
+ * Company logo from profile/logos/, else initials. The color stays the same for the same company.
+ * Mantine falls back to the initials when the image fails to load.
+ */
 export function CompanyAvatar({ name }: { name: string }) {
-	const base = name.replace(/\s+(a\.s\.|s\.r\.o\.|spol\..*|gmbh|ltd\.?|inc\.?)$/i, '');
+	const base = companyBase(name);
+	const logo = logos[companySlug(name)];
 	const initials =
 		base
 			.split(/[\s,]+/)
@@ -35,9 +40,14 @@ export function CompanyAvatar({ name }: { name: string }) {
 		<Avatar
 			size={32}
 			radius="xl"
+			src={logo}
 			color={avatarColor(base)}
 			variant="filled"
 			autoContrast={false}
+			// White behind the logo in both schemes, logos are drawn for light backgrounds.
+			bg={logo ? 'white' : undefined}
+			bd={logo ? '1px solid var(--mantine-color-default-border)' : undefined}
+			imageProps={{ style: { objectFit: 'contain', padding: 4 } }}
 			style={{ flexShrink: 0 }}
 			aria-hidden
 		>

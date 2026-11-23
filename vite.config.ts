@@ -19,8 +19,18 @@ export default defineConfig(({ mode }) => ({
 		// No other origin (another localhost app, a page you visit) may read from this server.
 		cors: false,
 		fs: {
-			// Vite's defaults, then everything in profile/ except the JSON the app imports (the CV), and dist/.
-			deny: ['.env', '.env.*', '*.{crt,pem}', '**/.git/**', `${own('profile')}/**/!(*.json)`, `${own('dist')}/**`],
+			// Vite's defaults, then everything in profile/ except the JSON the app imports and the logo images
+			// (so the CV stays private), and dist/.
+			deny: [
+				'.env',
+				'.env.*',
+				'*.{crt,pem}',
+				'**/.git/**',
+				`${own('profile')}/!(*.json)`,
+				`${own('profile')}/!(logos)/**/!(*.json)`,
+				`${own('profile')}/logos/**/!(*.{png,jpg,webp,svg,ico})`,
+				`${own('dist')}/**`,
+			],
 		},
 	},
 	// Not deployable by design: profile/*.json is bundled at build time. `pnpm build` is a compile check
