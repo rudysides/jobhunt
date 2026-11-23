@@ -17,6 +17,9 @@
 <p align="center">
   <a href="https://claude.com/claude-code"><img src="https://img.shields.io/badge/Claude%20Code-d97757?style=flat-square&logo=claude&logoColor=white" alt="Claude Code" /></a>
   <a href="https://pnpm.io"><img src="https://img.shields.io/badge/pnpm-f69220?style=flat-square&logo=pnpm&logoColor=white" alt="pnpm" /></a>
+</p>
+
+<p align="center">
   <a href="https://react.dev"><img src="https://img.shields.io/badge/React-19-61dafb?style=flat-square&logo=react&logoColor=20232a" alt="React 19" /></a>
   <a href="https://mantine.dev"><img src="https://img.shields.io/badge/Mantine-9-339af0?style=flat-square&logo=mantine&logoColor=white" alt="Mantine 9" /></a>
   <a href="https://vite.dev"><img src="https://img.shields.io/badge/Vite-8-646cff?style=flat-square&logo=vite&logoColor=white" alt="Vite 8" /></a>
