@@ -23,6 +23,8 @@
 		"leads:check": "node src/check-leads.ts"
 	},
 	"dependencies": {
+		"@fontsource/ibm-plex-mono": "5.2.5",
+		"@fontsource/ibm-plex-sans": "5.2.5",
 		"@mantine/core": "9.8.1",
 		"@mantine/dates": "9.8.1",
 		"@mantine/hooks": "9.8.1",

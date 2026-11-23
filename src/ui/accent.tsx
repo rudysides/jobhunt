@@ -1,11 +1,11 @@
 /*
  * Accent color: the user's choice, remembered by the browser (localStorage).
- * When storage can't be read or written, the default blue stays.
+ * When storage can't be read or written, the default orange (the logo dot) stays.
  */
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 
 // Mantine palette colors. Red and yellow are missing on purpose: they belong to problems.
-export const accents = ['blue', 'violet', 'cyan', 'teal', 'green', 'orange', 'pink'] as const;
+export const accents = ['orange', 'blue', 'violet', 'cyan', 'teal', 'green', 'pink'] as const;
 export type Accent = (typeof accents)[number];
 
 const KEY = 'jobhunt-local.accent';
@@ -13,14 +13,14 @@ const KEY = 'jobhunt-local.accent';
 function load(): Accent {
 	try {
 		const v = localStorage.getItem(KEY);
-		return accents.includes(v as Accent) ? (v as Accent) : 'blue';
+		return accents.includes(v as Accent) ? (v as Accent) : 'orange';
 	} catch {
-		return 'blue';
+		return 'orange';
 	}
 }
 
 const AccentContext = createContext<{ accent: Accent; setAccent: (a: Accent) => void }>({
-	accent: 'blue',
+	accent: 'orange',
 	setAccent: () => {},
 });
 

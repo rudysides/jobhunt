@@ -11,6 +11,10 @@ import 'dayjs/locale/it';
 import 'dayjs/locale/nl';
 import 'dayjs/locale/pl';
 import 'dayjs/locale/pt';
+// Fonts ship with the app (no CDN). unicode-range keeps unused subsets from loading.
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-mono/400.css';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
 import '@mantine/notifications/styles.css';

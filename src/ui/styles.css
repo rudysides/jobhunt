@@ -113,9 +113,40 @@ body {
 	}
 }
 
-/* A segmented control on the page background: its track is nearly the page color, so it gets the card hairline. */
-.page-switch {
-	border: 1px solid var(--mantine-color-default-border);
+/* Counts and other meta: mono, small, dimmed, tabular. */
+.meta {
+	font-family: var(--mantine-font-family-monospace);
+	font-size: var(--mantine-font-size-xs);
+	font-variant-numeric: tabular-nums;
+	color: var(--mantine-color-dimmed);
+}
+
+/* List tabs: plain text, the open one in the text color with a 2px accent underline. */
+.list-tab {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 8px;
+	padding: 6px 0;
+	border-bottom: 2px solid transparent;
+	color: var(--mantine-color-dimmed);
+	font-weight: 500;
+	transition:
+		color 120ms,
+		border-color 120ms;
+}
+.list-tab[aria-selected='true'] {
+	color: var(--mantine-color-text);
+	border-bottom-color: var(--mantine-primary-color-filled);
+}
+.list-tab:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 2px;
+	border-radius: 4px;
+}
+@media (hover: hover) {
+	.list-tab:hover {
+		color: var(--mantine-color-text);
+	}
 }
 
 /* Toasts: no accent bar, a hairline instead. Only error toasts (toast-danger) keep their red bar. */

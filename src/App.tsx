@@ -14,12 +14,12 @@ import {
 	Flex,
 	Group,
 	Paper,
-	SegmentedControl,
 	Select,
 	Stack,
 	Text,
 	Textarea,
 	Title,
+	UnstyledButton,
 } from '@mantine/core';
 import {
 	AppHeader,
@@ -135,7 +135,6 @@ function Row({ r, sent }: { r: JobRow; sent: boolean }) {
 							/>
 							<Button
 								variant="default"
-								c="var(--mantine-primary-color-filled)"
 								className="hover-accent"
 								size="xs"
 								leftSection={<Icon name="check" />}
@@ -244,13 +243,42 @@ const sorters: Record<Sort, (a: JobRow, b: JobRow) => number> = {
 	company: (a, b) => a.company.localeCompare(b.company, locale, { sensitivity: 'base' }),
 };
 
-function TabLabel({ label, count }: { label: string; count: number }) {
+/** Plain text tabs: label plus a mono count, the open one in the text color with an accent underline. */
+function ListTabs({
+	value,
+	onChange,
+	items,
+}: {
+	value: Tab;
+	onChange: (t: Tab) => void;
+	items: { value: Tab; label: string; count: number }[];
+}) {
+	const move = (dir: number) => {
+		const i = items.findIndex((x) => x.value === value);
+		const next = items[(i + dir + items.length) % items.length]!;
+		onChange(next.value);
+		document.getElementById(`tab-${next.value}`)?.focus();
+	};
 	return (
-		<Group gap={8} wrap="nowrap" justify="center">
-			<span>{label}</span>
-			<Text span c="dimmed" size="sm" className="tnum">
-				{count}
-			</Text>
+		<Group gap={20} role="tablist" aria-label={t.lists.label} wrap="nowrap">
+			{items.map((x) => (
+				<UnstyledButton
+					key={x.value}
+					id={`tab-${x.value}`}
+					role="tab"
+					aria-selected={x.value === value}
+					tabIndex={x.value === value ? 0 : -1}
+					className="list-tab"
+					onClick={() => onChange(x.value)}
+					onKeyDown={(e) => {
+						if (e.key === 'ArrowRight') move(1);
+						if (e.key === 'ArrowLeft') move(-1);
+					}}
+				>
+					{x.label}
+					<span className="meta">{x.count}</span>
+				</UnstyledButton>
+			))}
 		</Group>
 	);
 }
@@ -278,7 +306,7 @@ export default function App() {
 
 	return (
 		<Container size={900} px={{ base: 'md', sm: 'lg' }} py="lg" pb={48}>
-			<Stack gap="md">
+			<Stack gap={24}>
 				<AppHeader
 					title={t.appTitle}
 					onHome={() => setScreen('main')}
@@ -307,17 +335,15 @@ export default function App() {
 				) : rows.length === 0 && (!profile || leads.length === 0) ? (
 					<Onboarding onAdd={() => setAdding(true)} />
 				) : (
-					<>
+					<Stack gap={12}>
 						{/* Tab switch and sort sit on the page above the card. */}
 						<Group justify="space-between" gap="sm">
-							<SegmentedControl
-								aria-label={t.lists.label}
-								className="page-switch"
+							<ListTabs
 								value={tab}
-								onChange={(v) => setTab(v as Tab)}
-								data={[
-									{ value: 'todo', label: <TabLabel label={t.lists.toSend} count={toSend.length} /> },
-									{ value: 'applied', label: <TabLabel label={t.lists.sent} count={sent.length} /> },
+								onChange={setTab}
+								items={[
+									{ value: 'todo', label: t.lists.toSend, count: toSend.length },
+									{ value: 'applied', label: t.lists.sent, count: sent.length },
 								]}
 							/>
 							<Group gap="xs" wrap="nowrap">
@@ -350,7 +376,7 @@ export default function App() {
 							renderItem={(r) => <Row r={r} sent={tab === 'applied'} />}
 							empty={tab === 'todo' ? t.lists.allSent : t.lists.noneSent}
 						/>
-					</>
+					</Stack>
 				)}
 			</Stack>
 			{adding && <JobForm applied={screen === 'main' && tab === 'applied'} onClose={() => setAdding(false)} />}
