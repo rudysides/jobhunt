@@ -8,6 +8,8 @@ argument-hint: '[count, default 15] [extra focus, e.g. "only remote"]'
 
 ## Hard rules
 
+- **Nothing older than 6 months.** Never add or report a posting published more than 6 months ago, or one that is
+  closed or expired (step 4).
 - **Append only.** Add new objects at the end of `profile/leads.json`. Never rewrite, reorder or delete existing ones.
   (The app tracks the user's state by `leadId`; changing an id loses their progress.)
 - **Stable unique `leadId`**: kebab-case `company-position` (e.g. `acme-junior-frontend`). Add a suffix on collision.
@@ -52,6 +54,10 @@ give a personal free-mail address (gmail, seznam, gmx, web.de, wp.pl, libero, â€
    - Run at most ~10 WebSearch calls per turn; more hit the rate limit.
 4. **Open every posting** before adding it. Skip it if it hits `exclude.companies` / `exclude.keywords`,
    clearly needs more seniority than `seniority`, or is outside `locations` without matching `remote`.
+   **Skip stale postings:** posted more than 6 months before today, marked closed / expired / "no longer available",
+   or past its closing date. Relative ages ("vor 3 Wochen", "hace 2 meses") count; a date without a year (itjobs.pt)
+   is the most recent such date. No date on the page: keep it only if it still shows a way to apply, and write
+   "posting date unknown" in `notes`. Search snippets and aggregator pages don't prove a posting is fresh.
 5. For each kept posting build a lead:
    ```json
    {
